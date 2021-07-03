@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"gy-hu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="One sentence summary The author proposed a new framework to solving some limitations in PrivKVM, achieving good experiment results on 4 real world dataset.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Paper Reading 4 - PCKV: Locally Differentially Private Correlated Key-Value Data Collection with Optimized Utility">
+<meta property="og:url" content="https://gy-hu.github.io/2021/07/02/Paper-reading-0/index.html">
+<meta property="og:site_name" content="Gary&#39;s Personal Page">
+<meta property="og:description" content="One sentence summary The author proposed a new framework to solving some limitations in PrivKVM, achieving good experiment results on 4 real world dataset.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.imgur.com/QxzSV5g.png">
+<meta property="og:image" content="https://i.imgur.com/DUqklqH.png">
+<meta property="og:image" content="https://i.imgur.com/gYPu7pJ.png">
+<meta property="og:image" content="https://i.imgur.com/fMLpA05.png">
+<meta property="og:image" content="https://i.imgur.com/UW7aukX.png">
+<meta property="og:image" content="https://i.imgur.com/nIJYo6H.png">
+<meta property="og:image" content="https://i.imgur.com/rx3nehK.png">
+<meta property="og:image" content="https://i.imgur.com/H4bCWly.png">
+<meta property="og:image" content="https://i.imgur.com/NX4HUFX.png">
+<meta property="og:image" content="https://i.imgur.com/NX4HUFX.png">
+<meta property="article:published_time" content="2021-07-02T05:49:56.000Z">
+<meta property="article:modified_time" content="2021-07-03T21:13:02.906Z">
+<meta property="article:author" content="Gary Hu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/QxzSV5g.png">
+
+<link rel="canonical" href="https://gy-hu.github.io/2021/07/02/Paper-reading-0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Paper Reading 4 - PCKV: Locally Differentially Private Correlated Key-Value Data Collection with Optimized Utility | Gary's Personal Page</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Gary's Personal Page</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://gy-hu.github.io/2021/07/02/Paper-reading-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Gary Hu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gary's Personal Page">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Paper Reading 4 - PCKV: Locally Differentially Private Correlated Key-Value Data Collection with Optimized Utility
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-07-02 13:49:56" itemprop="dateCreated datePublished" datetime="2021-07-02T13:49:56+08:00">2021-07-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-07-04 05:13:02" itemprop="dateModified" datetime="2021-07-04T05:13:02+08:00">2021-07-04</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://i.imgur.com/QxzSV5g.png" /></p>
+<h2 id="one-sentence-summary">One sentence summary</h2>
+<p>The author proposed a new framework to solving some limitations in PrivKVM, achieving good experiment results on 4 real world dataset.</p>
+<a id="more"></a>
+<h2 id="background">Background</h2>
+<p>Some giant tech-companies are collecting our private data to provide better services, but privacy concerns arise in the present era. Some researcher proposed locally private data collection model to solve this problem.</p>
+<p><img src="https://i.imgur.com/DUqklqH.png" /></p>
+<p>Especially for Key-Value data, there exist many challengs in Key-Value data. Here give a scenario which is the movie rating system (such as Douban and IMDB), and the problem define is:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Attribute</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Data Type</td>
+<td>Each user has different number of KV pairs</td>
+</tr>
+<tr class="even">
+<td>Data Domain</td>
+<td>Key in <span class="math inline">\({1,2,⋯, d}\)</span>, value in <span class="math inline">\([−1,1]\)</span></td>
+</tr>
+<tr class="odd">
+<td>Task</td>
+<td>Frequency and mean estimation</td>
+</tr>
+<tr class="even">
+<td>Threat Model</td>
+<td>Honest-but-curious server</td>
+</tr>
+<tr class="odd">
+<td>Objectives</td>
+<td>Good privacy-utility tradeoff</td>
+</tr>
+</tbody>
+</table>
+<p><img src="https://i.imgur.com/gYPu7pJ.png" /> The existing challengs in this problem are:</p>
+<ul>
+<li><strong>Challenges 1</strong>: Each user has different number of key-value pairs.</li>
+<li><strong>Challenges 2</strong>: It's hard to report the corresponding value if a fake key is reported.</li>
+<li><strong>Challenges 3</strong>: It's hard to design an optimal mechanism with the best privacy-utility tradeoff.</li>
+</ul>
+<h2 id="related-work">Related work</h2>
+<p>Duchi et al. proposed LDP(Local Differential Privacy) in 2013, this can be conclude as the following formula:</p>
+<p><span class="math display">\[
+\frac{\operatorname{Pr}(\mathcal{M}(x)=y)}{\operatorname{Pr}\left(\mathcal{M}\left(x^{\prime}\right)=y\right)} \leqslant e^{\varepsilon}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(x\)</span>, <span class="math inline">\(x^{\prime}\)</span> : Stand for the raw data generate by user</li>
+<li><span class="math inline">\(y\)</span> : The perturbed data</li>
+<li><span class="math inline">\(\epsilon\)</span> : Privacy budget</li>
+</ul>
+<p>Warner proposed <strong>randomized response</strong> in 1965 for binary answer.</p>
+<p><span class="math display">\[
+\text { To satisfy } \epsilon \text { -LDP: } p=\frac{e^{\epsilon}}{e^{\epsilon}+1} \text { (since } \frac{p}{1-p}=e^{\epsilon} \text { ) }
+\]</span></p>
+<p><span class="math display">\[
+\mathbb{E}[f]=f^{*} p+\left(1-f^{*}\right)(1-p)=(2 p-1) f^{*}+(1-p)
+\]</span></p>
+<p>After that, many other researchers have proposed OUE, GRR which are extended RR for general cases. GRR stand for <strong>generalized randomized response</strong>, the formula is here:</p>
+<p><span class="math display">\[
+\operatorname{Pr}(\mathcal{M}(x)=y)=\left\{\begin{array}{ll}
+p=\frac{e^{\varepsilon}}{e^{\epsilon}+d-1}, &amp; \text { if } y=x \\
+q=\frac{1-p}{d-1}, &amp; \text { if } y \neq x
+\end{array}\right.
+\]</span></p>
+<p>UE stand for <strong>Unary Encoding</strong>, the formula is here:</p>
+<p><span class="math display">\[
+\operatorname{Pr}(\mathbf{y}[k]=1)=\left\{\begin{array}{ll}
+p, &amp; \text { if } \mathbf{x}[k]=1 \\
+q, &amp; \text { if } \mathbf{x}[k]=0
+\end{array} \quad(\forall k=1,2, \cdots, d)\right.
+\]</span></p>
+<p>Ye at al. proposed <strong>PrivKVM</strong> in 2019, the process of their framework is: <img src="https://i.imgur.com/fMLpA05.png" /></p>
+<h2 id="method">Method</h2>
+<p><strong>- Step 1. Choose the advanced sampling protocol</strong><br />
+<strong>- Step 2. Jointly perturb key-value and jointly analyze the privacy</strong> (which provides tight privacy budget composition)<br />
+<strong>- Step 3. Optimally put all things together</strong> (i.e., optimized privacy budget allocation under a fixed total budget)</p>
+<p><img src="https://i.imgur.com/UW7aukX.png" /></p>
+<ul>
+<li><strong>Advanced sampling protocol</strong>: Each user pads her keys into a uniform length <span class="math inline">\(\ell\)</span> by some dummy keys.</li>
+<li><strong>Joint privacy analysis</strong>: In an end-to-end way (instead of directly using sequential composition).</li>
+<li><strong>Optimized allocation</strong> of <span class="math inline">\(\epsilon_{1}\)</span> and <span class="math inline">\(\epsilon_{2}\)</span>: by minimizing MSE of estimation under tight budget composition.</li>
+</ul>
+<h2 id="evaluation">Evaluation</h2>
+<p>The evaluation part author conduct experiment on 4 real world dataset to test its robust <img src="https://i.imgur.com/nIJYo6H.png" /></p>
+<h3 id="on-e-commerce-dataset">On E-commerce dataset</h3>
+<p><img src="https://i.imgur.com/rx3nehK.png" /></p>
+<h3 id="on-clothing-dataset">On Clothing dataset</h3>
+<p><img src="https://i.imgur.com/H4bCWly.png" /></p>
+<h3 id="on-amazon-dataset">On Amazon Dataset</h3>
+<p><img src="https://i.imgur.com/NX4HUFX.png" /></p>
+<h3 id="on-movie-dataset">On Movie Dataset</h3>
+<p><img src="https://i.imgur.com/NX4HUFX.png" /></p>
+<h2 id="reading-summary">Reading summary</h2>
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 64%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>What is the contribution</strong></td>
+<td>1. The author proposed PCKV framework，and simultanously proposed two methods: one is called <strong><em>PCKV-UE</em></strong>, which based on <strong><em>unary encoding</em></strong>, the other called <strong><em>PCKV-GRR</em></strong>，which based on <strong><em>generalized randomized response</em></strong>.</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>2. Extend <strong><em>padding-and-sampling protocol</em></strong> for key-value data. Which has been verified that it is better than <strong><em>sampling protocol</em></strong> used in PrivKVM on <strong>large domain</strong>.</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>3. Show the <strong>budget composition</strong> in key-value.</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>4. The author proposed a near-optimal budget allocation approach for <strong><em>PCKV-UE</em></strong> and <strong><em>PCKV-GRR</em></strong>.</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>5. Evaluate their scheme using both <strong>synthetic</strong> and <strong>real world datasets</strong>, which is shown to have <strong>higher utility</strong> (i.e., less MSE) than existing schemes</td>
+</tr>
+<tr class="even">
+<td><strong>What is the strengths</strong></td>
+<td>1. Propose better <strong>mean of values estimate method</strong>, which can be calculated in <strong>only one round</strong>.</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>2. The author's proposed method has tighter <strong>budget composition</strong> and optimized <strong>budget allocation</strong>.</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>3. Use advanced <strong>sampling protocol</strong>, perform better than SOTA (e.g. PrivKVM) especially on <strong>large domain</strong>.</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>4. Consumes <strong>less privacy budget</strong> overall than the budget summation of key and value perturbations.</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>5. In this framework, the Mean Square Error (MSE) of frequency and mean estimations in their scheme can be theoretically analyzed, they can derive <strong>near-optimal privacy budget allocation</strong> on key and value perturbations.</td>
+</tr>
+<tr class="odd">
+<td><strong>What is the weaknesses</strong></td>
+<td>It has big variance for a smaller population.</td>
+</tr>
+<tr class="even">
+<td><strong>What is the existing issue</strong></td>
+<td>There is no ideal strategy of choosing <span class="math inline">\(\ell\)</span> found in <strong><em>Padding-and-Sampling protocol</em></strong> yet.</td>
+</tr>
+<tr class="odd">
+<td><strong>Insight of future work</strong></td>
+<td>1. Extend the framework to protect machine learning (maybe inspire on federal learning?).</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>2. Extend the correlated perturbation and tight composition analysis to multi-dimensional data (such as <strong><em>k-Way Marginal Probability Distribution Estimation</em></strong> and <strong><em>Conditional Probability Distribution Estimation</em></strong>).</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>3. Can this framework inspire on solving problem on social graphs, linear query answer, preference ranking and evolving data type?</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/05/Routing-Intro/" rel="prev" title="Intro of Routing (electronic design automation)">
+      <i class="fa fa-chevron-left"></i> Intro of Routing (electronic design automation)
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#one-sentence-summary"><span class="nav-number">1.</span> <span class="nav-text">One sentence summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#background"><span class="nav-number">2.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#related-work"><span class="nav-number">3.</span> <span class="nav-text">Related work</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#evaluation"><span class="nav-number">5.</span> <span class="nav-text">Evaluation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#on-e-commerce-dataset"><span class="nav-number">5.1.</span> <span class="nav-text">On E-commerce dataset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#on-clothing-dataset"><span class="nav-number">5.2.</span> <span class="nav-text">On Clothing dataset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#on-amazon-dataset"><span class="nav-number">5.3.</span> <span class="nav-text">On Amazon Dataset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#on-movie-dataset"><span class="nav-number">5.4.</span> <span class="nav-text">On Movie Dataset</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reading-summary"><span class="nav-number">6.</span> <span class="nav-text">Reading summary</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Gary Hu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Gary Hu</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
