@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"gy-hu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Introduction Fuzzing is a practical, widely-deployed technique to find bugs in complex, real-world programs like JavaScript engines. Some researchers (Park et al., 2020) nowadays have conducted resear">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tool Learning 0 - Fuzzilli (1)">
+<meta property="og:url" content="https://gy-hu.github.io/2021/07/04/Tool-learning-0/index.html">
+<meta property="og:site_name" content="Gary&#39;s Personal Page">
+<meta property="og:description" content="Introduction Fuzzing is a practical, widely-deployed technique to find bugs in complex, real-world programs like JavaScript engines. Some researchers (Park et al., 2020) nowadays have conducted resear">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705172205.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705115022.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705115612.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705155143.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161047.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705174754.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161526.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705173232.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161605.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161646.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161718.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161738.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161825.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705173303.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705163316.png">
+<meta property="article:published_time" content="2021-07-04T06:43:48.333Z">
+<meta property="article:modified_time" content="2021-07-05T12:45:50.448Z">
+<meta property="article:author" content="Gary Hu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705172205.png">
+
+<link rel="canonical" href="https://gy-hu.github.io/2021/07/04/Tool-learning-0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Tool Learning 0 - Fuzzilli (1) | Gary's Personal Page</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Gary's Personal Page</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://gy-hu.github.io/2021/07/04/Tool-learning-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Gary Hu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gary's Personal Page">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Tool Learning 0 - Fuzzilli (1)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-07-04 14:43:48" itemprop="dateCreated datePublished" datetime="2021-07-04T14:43:48+08:00">2021-07-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-07-05 20:45:50" itemprop="dateModified" datetime="2021-07-05T20:45:50+08:00">2021-07-05</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="introduction">Introduction</h2>
+<p>Fuzzing is a practical, widely-deployed technique to find bugs in complex, real-world programs like JavaScript engines. Some researchers (Park et al., 2020) nowadays have conducted research on this topic and make their attention to some commercial application.</p>
+<p>Thus, to learn how to fuzz on JS engine, firstly I need to pay my attention to a open source project. My choice is Fuzzilli. In this post, I will record the experience of learning Fuzzilli, and my attempt to implement this to Chakracore (which is a open source JSE implemented in Edge broswer).</p>
+<a id="more"></a>
+<p>In the whole part of introduction, I have referred some content in <a target="_blank" rel="noopener" href="https://blog.doyensec.com/2020/09/09/fuzzilli-jerryscript.html">this blog</a> and <a target="_blank" rel="noopener" href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwiZ_szIwcvxAhXCdCsKHSctC3kQFjABegQIAhAD&amp;url=https%3A%2F%2Fsaelo.github.io%2Fpresentations%2Foffensivecon_19_fuzzilli.pdf&amp;usg=AOvVaw2KzOIx-n6SmrBf83dnNt2p">this slide</a>.</p>
+<h3 id="what-is-fuzzilli">What is Fuzzilli</h3>
+<p>Fuzzilli is a fuzzer for fuzzing JavaScript engines. It was developed by <a target="_blank" rel="noopener" href="https://twitter.com/5aelo">Samuel Groß</a>, who graduated from Karlsruher Institut für Technologie. This tool was firstly proposed in his <a target="_blank" rel="noopener" href="https://saelo.github.io/papers/thesis.pdf">master thesis</a>, and its motivation of designing this is to find bugs in JS engines (JIT compilers, for instance).</p>
+<p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705172205.png" /></p>
+<p>It uses an intermediate representation (IR) language called FuzzIL, which is perfectly suitable for mutation. Any program written in FuzzIL could be converted to valid JS code. Currently, the official github repo support <a target="_blank" rel="noopener" href="https://github.com/WebKit/webkit">JavaScriptCore</a> (JS engine for safari), <a target="_blank" rel="noopener" href="https://github.com/jerryscript-project/jerryscript">Jerryscript</a> (JS engine for IoT devices), <a target="_blank" rel="noopener" href="https://github.com/bellard/quickjs">QuickJS</a> (Light weight embeddable JS engine), <a target="_blank" rel="noopener" href="https://github.com/mozilla/gecko-dev">Spider monkey</a> (JS engine for Mozilla Firefox), <a target="_blank" rel="noopener" href="https://v8.dev/docs/build">V8</a> (JS engine for Google Chrome), <a target="_blank" rel="noopener" href="https://github.com/svaarala/duktape">duktape</a> (Embeddable Javascript engine, can be regarded as light weight v8).</p>
+<h3 id="terminology">Terminology</h3>
+<pre class="mermaid">graph TD
+A(Modify JSE)-->B(JSE read input from fuzzer);
+B-->C(JSE execute some sample);
+C-->D(Fuzzer obtain coverage)
+D-->E(Reset the state)</pre>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>REPRL<a target="_blank" rel="noopener" href="https://github.com/googleprojectzero/fuzzilli/blob/main/Sources/Fuzzilli/Execution/REPRL.swift">(read-eval-print-reset-loop)</a>.</td>
+<td>REPRL is a mechanism to reduce the overhead of launching a new process have been implemented. As many fuzzer architectures use Forkserver, Fuzzilli use REPRL approach, which saves the overhead caused by fork() and execution per sample could be faster.</td>
+</tr>
+<tr class="even">
+<td>Coverage</td>
+<td><a target="_blank" rel="noopener" href="https://clang.llvm.org/docs/SanitizerCoverage.html#tracing-pcs-with-guards">LLVM</a> provide this kind of function. Clang complier has a schema called <code>-fsanitize-coverage=trace-pc-guard</code>, we can receive a pointer to the <code>start</code> and <code>end</code> of the regions, which are initialized by the guard number. Whenever a branch is executed, the <code>__sanitizer_cov_trace_pc_guard</code> callback is called.</td>
+</tr>
+<tr class="odd">
+<td>Generation</td>
+<td>The generation program has been described in the thesis. All the program stem from this simple JavaScript by cleverly applying multiple mutators: <code>Object()</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="requirements">Requirements</h3>
+<h4 id="valid-syntax-of-produced-samples">Valid syntax of produced samples</h4>
+<p>The main idea is to formulate JavaScript language as context-free grammar, then apply random production rules. The below script was generated by grammar-based fuzzer.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...;</span><br><span class="line"><span class="keyword">var</span> v4 = <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">42</span>, v3, “foobar”);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> v5 = <span class="number">0</span>; v5 &lt; <span class="number">1000</span>; v5++) &#123;    </span><br><span class="line">    v4 = v5 * <span class="number">7</span>;    </span><br><span class="line">    <span class="keyword">var</span> v6 = v4.slice(v1, v1, v2);</span><br><span class="line">    &#125;</span><br><span class="line">...;</span><br></pre></td></tr></table></figure>
+<p>However, the exception may occur when v4.slice is not a function, which will make the following statement would not be executed. This could be solved by adding try-catch, but it will make two pretty different things for a JIT compiler.</p>
+<p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705115022.png" /></p>
+<h4 id="high-degree-of-semantic-correctness">High degree of semantic correctness</h4>
+<p>This requirement is harder to achieve than syntactical correctness. There are multiple options for this:</p>
+<blockquote>
+<ol type="a">
+<li><p>Precise type tracking in generated code.</p></li>
+<li><p>Generate JavaScript code “step-by-step”, validating after each step.</p></li>
+<li><p>Use mutational approach, only keep semantically valid samples in corpus.</p></li>
+</ol>
+</blockquote>
+<h4 id="definition-of-sensible-mutations-of-javascript-code">Definition of sensible mutations of JavaScript code</h4>
+<p>The mutation possible at different levels, from source code level to bytecode level.</p>
+<p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705115612.png" /></p>
+<h3 id="fuzzil-and-mutation">FuzzIL and mutation</h3>
+<p>As mentioned in the previous part, FuzzIL is a intermediate language, and it used to capture control flow and data flow. There are four mutation methods defined on the IL, which are operation mutator, input mutator, splice mutator and insertion mutator.</p>
+<p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705155143.png" /></p>
+<h3 id="minimization">Minimization</h3>
+<p>Since mutation can only grow a program in size, minimization has been required before inserting them into the corpus. The algorithm of minimization is simple, the psuedocode is as below:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">remove one instruction (starting at end)</span><br><span class="line"></span><br><span class="line">if the program still valid:</span><br><span class="line"></span><br><span class="line">​	execute the program</span><br><span class="line"></span><br><span class="line">​	if behavior (crash, new edges) has changed:</span><br><span class="line"></span><br><span class="line">​		restore instruction</span><br><span class="line"></span><br><span class="line">​	else if the behavior not change :</span><br><span class="line"></span><br><span class="line">​		continue to remove next instruction</span><br><span class="line"></span><br><span class="line">else if the program is not valid:</span><br><span class="line"></span><br><span class="line">​	restore instruction</span><br></pre></td></tr></table></figure>
+<p>Thus, the program will be minimized until it has no instruction could be remove without changing its behavior. The cost of this algorithm is very expensive, so there is much room for improvement here.</p>
+<h3 id="guided-fuzzing">Guided Fuzzing</h3>
+<p>The feedback system will be plugged in to stimulate the programs have future mutations. There is a method called <strong>edge-coverage</strong>, which is similar to afl, has been implemented.</p>
+<p>The algorithm of guided fuzzing is as below:</p>
+<p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161047.png" /></p>
+<p>The architecture of fuzzilli could be as below:</p>
+<p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705174754.png" /></p>
+<h3 id="synchronization">Synchronization</h3>
+<p>I think this part is interesting, this process let me think about hadoop. There is a master node and a couple of worker node. At begin, the worker will begin to find something in the program independently, when one of them find some interesting, they will notify the master node.</p>
+<table>
+<thead>
+<tr class="header">
+<th>At begin</th>
+<th>Find some interesting</th>
+<th>Master got the information</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161526.png" /></td>
+<td><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705173232.png" /></td>
+<td><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161605.png" /></td>
+</tr>
+</tbody>
+</table>
+<p>After master node executed and checked, it would notify this to other worker node.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Master executed</th>
+<th>Finish checking</th>
+<th>Share information</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161646.png" /></td>
+<td><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161718.png" /></td>
+<td><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161738.png" /></td>
+</tr>
+</tbody>
+</table>
+<p>The other worker node will executed and evaluated by their own. This process can be setup with GCE and docker, and probably can implement on Kubernetes.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Worker executed and evaluated</th>
+<th>End</th>
+<th>Can be scaled further</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161825.png" /></td>
+<td><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705173303.png" /></td>
+<td><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705163316.png" /></td>
+</tr>
+</tbody>
+</table>
+<h2 id="how-it-works">How it works</h2>
+<p>For more details of fuzzilli, can refer to <a target="_blank" rel="noopener" href="https://github.com/googleprojectzero/fuzzilli/blob/main/Docs/HowFuzzilliWorks.md">this document</a>.</p>
+<h2 id="reference">Reference</h2>
+<p>Park, S., Xu, W., Yun, I., Jang, D., &amp; Kim, T. (2020). Fuzzing JavaScript Engines with Aspect-preserving Mutation. <em>2020 IEEE Symposium on Security and Privacy (SP)</em>, 1629–1642. https://doi.org/10.1109/SP40000.2020.00067</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/07/02/Paper-reading-4/" rel="prev" title="Paper Reading 4 - PCKV: Locally Differentially Private Correlated Key-Value Data Collection with Optimized Utility">
+      <i class="fa fa-chevron-left"></i> Paper Reading 4 - PCKV: Locally Differentially Private Correlated Key-Value Data Collection with Optimized Utility
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#what-is-fuzzilli"><span class="nav-number">1.1.</span> <span class="nav-text">What is Fuzzilli</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#terminology"><span class="nav-number">1.2.</span> <span class="nav-text">Terminology</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#requirements"><span class="nav-number">1.3.</span> <span class="nav-text">Requirements</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#valid-syntax-of-produced-samples"><span class="nav-number">1.3.1.</span> <span class="nav-text">Valid syntax of produced samples</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#high-degree-of-semantic-correctness"><span class="nav-number">1.3.2.</span> <span class="nav-text">High degree of semantic correctness</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#definition-of-sensible-mutations-of-javascript-code"><span class="nav-number">1.3.3.</span> <span class="nav-text">Definition of sensible mutations of JavaScript code</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fuzzil-and-mutation"><span class="nav-number">1.4.</span> <span class="nav-text">FuzzIL and mutation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#minimization"><span class="nav-number">1.5.</span> <span class="nav-text">Minimization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#guided-fuzzing"><span class="nav-number">1.6.</span> <span class="nav-text">Guided Fuzzing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronization"><span class="nav-number">1.7.</span> <span class="nav-text">Synchronization</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#how-it-works"><span class="nav-number">2.</span> <span class="nav-text">How it works</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Gary Hu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Gary Hu</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
