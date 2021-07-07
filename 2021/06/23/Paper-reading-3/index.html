@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://i.imgur.com/0Da33ss.png">
 <meta property="og:image" content="https://i.imgur.com/80ICAoS.png">
 <meta property="article:published_time" content="2021-06-23T00:35:33.000Z">
-<meta property="article:modified_time" content="2021-07-03T22:29:32.974Z">
+<meta property="article:modified_time" content="2021-07-07T06:19:35.093Z">
 <meta property="article:author" content="Gary Hu">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://i.imgur.com/UXuQo4i.png">
@@ -198,7 +198,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-07-04 06:29:32" itemprop="dateModified" datetime="2021-07-04T06:29:32+08:00">2021-07-04</time>
+                <time title="Modified: 2021-07-07 14:19:35" itemprop="dateModified" datetime="2021-07-07T14:19:35+08:00">2021-07-07</time>
               </span>
 
           
@@ -218,7 +218,11 @@
 <h2 id="background">Background</h2>
 <p>Although defenses such as CFI break many code reuse attacks, there are still avenues to attack them, and researchers have developed a variety of defense-aware strategies for targeting defenses. However, these stragtegies exists some issues. For instance, some will fail in the presence of defenses such as CFI, some are aware of CFI but they are complex and only target a single, hard-coded CFI variant, some have always focused on automating a specific defense-aware technique for constructing code reuse attacks (e.g., DOP) that was manually discovered through human insight.</p>
 <h2 id="related-work">Related work</h2>
-<p>There are some tools for construct the CRAs: * BOPC, which is a state-of-the-art system for automatically discovering CFI-aware DOP attacks. * angrop, a popular ROP automation tool that is part of the angr binary analysis framework</p>
+<p>There are some tools for construct the CRAs:</p>
+<ul>
+<li>BOPC, which is a state-of-the-art system for automatically discovering CFI-aware DOP attacks.</li>
+<li>angrop, a popular ROP automation tool that is part of the angr binary analysis framework</li>
+</ul>
 <p>However, those methods faced challenges that hinder them develop.</p>
 <h2 id="method">Method</h2>
 <p>The code reuse attack problem can be reduced to software model checking (SMC) problem. Analogously, a code reuse problem is to determine whether a goal state can be reached from a vulnerability. The author use concolic execution, which allows Limbo to take a state and enumerate some of the states that are reachable from it by executing the program symbolically. Limbo uses this ability to iteratively compute a set of states that are reachable from the vulnerability. As soon as this set contains a goal state, Limbo outputs the discovered attack as an executable test case. The test case contains inputs that, when given to the program, will cause it to reach a goal state.</p>
@@ -230,7 +234,8 @@
 <li><p><strong><em>What is the novelty</em></strong></p></li>
 <li><p>Leverage the conconlic execution</p></li>
 <li><p>Not only discover the existed attack method (ROP, JOP, COP and DOP), but also potentially dicover attacks that do not correspond to known techniques for code reuse attacks.</p></li>
-<li><p><strong><em>What is the contribution</em></strong></p></li>
+<li><p><strong><em>What is the contribution</em></strong><br />
+</p></li>
 <li><p>Propose a generic framework for automatically identifying defense-aware code reuse attacks</p></li>
 <li><p>Implement our framework in a tool called Limbo.We show how existing binary concolic executors can be leveraged to implement our framework using a small set of modifications.</p></li>
 <li><p>Show that Limbo outperforms both angrop and BOPC, state-of-the-art tools for automatically constructing ROP and DOP attacks respectively, when there is little code available for reuse.</p></li>
@@ -329,7 +334,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
