@@ -22,7 +22,7 @@
 
   <meta name="description" content="Add Extra Target to Fuzzilli In addition to the existing targets in Fuzzilli&#39;s github repo, we can add extra targets, and make fuzzilli works on more JavaScript Engine.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Tool Learning 2 - Fuzzilli (3)">
+<meta property="og:title" content="Tool Learning 2 - Migrate ChakraCore to Fuzzilli">
 <meta property="og:url" content="https://gy-hu.github.io/2021/07/06/Tool-learning-2/index.html">
 <meta property="og:site_name" content="Gary&#39;s Personal Page">
 <meta property="og:description" content="Add Extra Target to Fuzzilli In addition to the existing targets in Fuzzilli&#39;s github repo, we can add extra targets, and make fuzzilli works on more JavaScript Engine.">
@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210706133917.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210706193357.png">
 <meta property="article:published_time" content="2021-07-06T02:01:27.320Z">
-<meta property="article:modified_time" content="2021-07-07T06:19:08.405Z">
+<meta property="article:modified_time" content="2021-07-07T06:22:05.677Z">
 <meta property="article:author" content="Gary Hu">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210706101726.png">
@@ -52,7 +52,7 @@
   };
 </script>
 
-  <title>Tool Learning 2 - Fuzzilli (3) | Gary's Personal Page</title>
+  <title>Tool Learning 2 - Migrate ChakraCore to Fuzzilli | Gary's Personal Page</title>
   
 
 
@@ -181,7 +181,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Tool Learning 2 - Fuzzilli (3)
+          Tool Learning 2 - Migrate ChakraCore to Fuzzilli
         </h1>
 
         <div class="post-meta">
@@ -198,7 +198,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-07-07 14:19:08" itemprop="dateModified" datetime="2021-07-07T14:19:08+08:00">2021-07-07</time>
+                <time title="Modified: 2021-07-07 14:22:05" itemprop="dateModified" datetime="2021-07-07T14:22:05+08:00">2021-07-07</time>
               </span>
 
           
@@ -215,7 +215,7 @@
         <h2 id="add-extra-target-to-fuzzilli">Add Extra Target to Fuzzilli</h2>
 <p>In addition to the existing targets in Fuzzilli's <a target="_blank" rel="noopener" href="https://github.com/googleprojectzero/fuzzilli/tree/main/Targets">github repo</a>, we can add extra targets, and make fuzzilli works on more JavaScript Engine.</p>
 <a id="more"></a>
-<h2 id="migrate-fuzzilli-to-chakracore-engine">Migrate Fuzzilli to Chakracore Engine</h2>
+<h2 id="migrate-fuzzilli-to-chakracore-engine">Migrate Fuzzilli to ChakraCore Engine</h2>
 <p>ChakraCore is an open source Javascript engine with a C API. Previously Microsoft Edge use this engine (However, they no longer use this until March 2021). So, in this post, I am going to migrate Fuzzilli to this engine, and try whether fuzzilli can easily migrate to other targets or not.</p>
 <h3 id="clone-the-code">Clone the code</h3>
 <p>Make sure you have installed <code>clang/clang++</code> and <code>llvm-dev</code> respectively. The reason of installing <code>clang/clang++</code> is for using its <code>SanitizerCoverage</code> (<a target="_blank" rel="noopener" href="https://clang.llvm.org/docs/SanitizerCoverage.html">document</a>) to get edge coverage on every execution.</p>
@@ -274,8 +274,8 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/07/05/Tool-learning-1/" rel="prev" title="Tool Learning 1 - Fuzzilli (2)">
-      <i class="fa fa-chevron-left"></i> Tool Learning 1 - Fuzzilli (2)
+    <a href="/2021/07/05/Tool-learning-1/" rel="prev" title="Tool Learning 1 - Use Fuzzilli on Real Target">
+      <i class="fa fa-chevron-left"></i> Tool Learning 1 - Use Fuzzilli on Real Target
     </a></div>
       <div class="post-nav-item"></div>
     </div>
@@ -336,7 +336,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#add-extra-target-to-fuzzilli"><span class="nav-number">1.</span> <span class="nav-text">Add Extra Target to Fuzzilli</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#migrate-fuzzilli-to-chakracore-engine"><span class="nav-number">2.</span> <span class="nav-text">Migrate Fuzzilli to Chakracore Engine</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#clone-the-code"><span class="nav-number">2.1.</span> <span class="nav-text">Clone the code</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#code-modification"><span class="nav-number">2.2.</span> <span class="nav-text">Code Modification</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#modify-makefile-and-implement-code-coverage"><span class="nav-number">2.2.1.</span> <span class="nav-text">Modify Makefile and Implement Code Coverage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#add-reprl"><span class="nav-number">2.2.2.</span> <span class="nav-text">Add REPRL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#add-builtin-function"><span class="nav-number">2.2.3.</span> <span class="nav-text">Add Builtin Function</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#create-fuzzilli-profile"><span class="nav-number">2.2.4.</span> <span class="nav-text">Create Fuzzilli Profile</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#run-the-fuzzilli"><span class="nav-number">2.3.</span> <span class="nav-text">Run the Fuzzilli</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#add-extra-target-to-fuzzilli"><span class="nav-number">1.</span> <span class="nav-text">Add Extra Target to Fuzzilli</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#migrate-fuzzilli-to-chakracore-engine"><span class="nav-number">2.</span> <span class="nav-text">Migrate Fuzzilli to ChakraCore Engine</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#clone-the-code"><span class="nav-number">2.1.</span> <span class="nav-text">Clone the code</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#code-modification"><span class="nav-number">2.2.</span> <span class="nav-text">Code Modification</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#modify-makefile-and-implement-code-coverage"><span class="nav-number">2.2.1.</span> <span class="nav-text">Modify Makefile and Implement Code Coverage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#add-reprl"><span class="nav-number">2.2.2.</span> <span class="nav-text">Add REPRL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#add-builtin-function"><span class="nav-number">2.2.3.</span> <span class="nav-text">Add Builtin Function</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#create-fuzzilli-profile"><span class="nav-number">2.2.4.</span> <span class="nav-text">Create Fuzzilli Profile</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#run-the-fuzzilli"><span class="nav-number">2.3.</span> <span class="nav-text">Run the Fuzzilli</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
