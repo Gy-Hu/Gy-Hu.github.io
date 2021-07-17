@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210716002902.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210716003158.png">
 <meta property="article:published_time" content="2021-07-15T13:55:34.866Z">
-<meta property="article:modified_time" content="2021-07-16T11:03:14.749Z">
+<meta property="article:modified_time" content="2021-07-17T10:27:43.457Z">
 <meta property="article:author" content="Gary Hu">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210716002252.png">
@@ -199,7 +199,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-07-16 19:03:14" itemprop="dateModified" datetime="2021-07-16T19:03:14+08:00">2021-07-16</time>
+                <time title="Modified: 2021-07-17 18:27:43" itemprop="dateModified" datetime="2021-07-17T18:27:43+08:00">2021-07-17</time>
               </span>
 
           
@@ -439,6 +439,7 @@
 <p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210716002902.png" /></p>
 <p>Some people also faced issues when they compile 400, it can be fixed by this:</p>
 <p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210716003158.png" /></p>
+<p>The configuration file doc is <a target="_blank" rel="noopener" href="https://www.spec.org/cpu2006/Docs/config.html">here</a>.</p>
 <h2 id="hello-spec-cpu">Hello, SPEC CPU</h2>
 <h3 id="example-1">Example 1</h3>
 <p>The first phrase to use spec is to try it with simple example. Here's the example 1:</p>
@@ -485,6 +486,18 @@
 <li><code>--action report</code>: Standard test.</li>
 <li><code>--action clean</code>: Clean the already built test project.</li>
 </ul>
+<h3 id="test-the-number-of-core-in-cpu">Test the Number of Core in CPU</h3>
+<p>Test the logical CPU core:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo |grep &quot;processor&quot;|sort -u|wc -l</span><br></pre></td></tr></table></figure>
+<p>Test the number of physical CPU:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep &quot;physical id&quot; /proc/cpuinfo|sort -u|wc -l</span><br></pre></td></tr></table></figure>
+<p>Or:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep &quot;physical id&quot; /proc/cpuinfo|sort -u</span><br></pre></td></tr></table></figure>
+<p>Real core number in every physical cpu:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep &quot;cpu cores&quot; /proc/cpuinfo|uniq</span><br></pre></td></tr></table></figure>
+<p>Logic core number in every physical cpu:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep &quot;siblings&quot; /proc/cpuinfo|uniq</span><br></pre></td></tr></table></figure>
+<p>Note: If the number of logic core larger than the real core number, this means CPU has open <strong>Hyper-Threading</strong>.</p>
 <h3 id="some-question-you-may-ask">Some Question You may Ask</h3>
 <ul>
 <li>Q: What's the different between <code>--nobuild</code> and <code>run</code> and <code>onlyrun</code> ?
@@ -495,7 +508,36 @@
 <ul>
 <li>A: Modify the MD5 value in <code>xx.cfg</code> with the new MD5 value. In addition, also can add <code>--nobuild</code> to prevent spec from building again the program.</li>
 </ul></li>
+<li>Q: What if I did not assign <code>rate</code> and <code>copies</code> ?
+<ul>
+<li>A: The SPEC CPU 2006 will test in <code>speed</code>, which will only test the single core performance.</li>
+</ul></li>
+<li>Q: What is the different between a "rate" and a "speed" metric?
+<ul>
+<li>A: Please refer to <a target="_blank" rel="noopener" href="https://www.spec.org/cpu2006/Docs/readme1st.html#Q15">here</a>.</li>
+</ul></li>
 </ul>
+<h2 id="file-structure">File Structure</h2>
+<p>The file structure of root is like this.</p>
+<blockquote>
+<p>. |-- Docs |-- Docs.txt |-- LICENSE |-- LICENSE.txt |-- MANIFEST |-- README |-- README.txt |-- Revisions |-- SUMS.tools |-- benchspec |-- bin |-- config |-- cshrc |-- install.bat |-- install.sh |-- redistributable_sources |-- result |-- shrc |-- shrc.bat |-- tmp |-- tools |-- uninstall.sh `-- version.txt</p>
+</blockquote>
+<p>In <code>SPEC_CPU2006-103/benchspec/CPU2006</code>:</p>
+<blockquote>
+<p>. |-- Docs |-- Spec |-- data |-- exe |-- run |-- src `-- version.txt</p>
+</blockquote>
+<p><code>src</code> is the folder of source code. <code>run</code> is the running folder, <code>exe</code> is the executable file folder. <code>data</code> is the folder of dataset.</p>
+<p>## Cross Compilation</p>
+<p>To run <code>SPEC CPU 2006</code> on simulation environment (GEM5, for instance) or the other embedded board (such as raspberry pi), we need cross compilation.</p>
+<p>Open <code>arm.cfg</code>, change them to your cross compiler:</p>
+<blockquote>
+<p>CC = your-cross-compiler-gcc</p>
+<p>CXX = your-cross-compiler-g++</p>
+<p>FC = your-cross-compiler-gfortran</p>
+</blockquote>
+<p>Then save and quit, trying to compile spec cpu (only build the int benchmark, and not run):</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">runspec --action=build --config=arm.cfg --tune=base int</span><br></pre></td></tr></table></figure>
+<p>Then move the binary executable file which at the source folder (for example, <code>benchspec/CPU2006/400.perlbench/build/</code>) to GEM5 or other platform.</p>
 
     </div>
 
@@ -573,7 +615,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#install-instruction"><span class="nav-number">2.</span> <span class="nav-text">Install Instruction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hello-spec-cpu"><span class="nav-number">3.</span> <span class="nav-text">Hello, SPEC CPU</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#example-1"><span class="nav-number">3.1.</span> <span class="nav-text">Example 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#example-2"><span class="nav-number">3.2.</span> <span class="nav-text">Example 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#example-3"><span class="nav-number">3.3.</span> <span class="nav-text">Example 3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#example-4"><span class="nav-number">3.4.</span> <span class="nav-text">Example 4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#example-5"><span class="nav-number">3.5.</span> <span class="nav-text">Example 5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#some-question-you-may-ask"><span class="nav-number">3.6.</span> <span class="nav-text">Some Question You may Ask</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#install-instruction"><span class="nav-number">2.</span> <span class="nav-text">Install Instruction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hello-spec-cpu"><span class="nav-number">3.</span> <span class="nav-text">Hello, SPEC CPU</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#example-1"><span class="nav-number">3.1.</span> <span class="nav-text">Example 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#example-2"><span class="nav-number">3.2.</span> <span class="nav-text">Example 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#example-3"><span class="nav-number">3.3.</span> <span class="nav-text">Example 3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#example-4"><span class="nav-number">3.4.</span> <span class="nav-text">Example 4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#example-5"><span class="nav-number">3.5.</span> <span class="nav-text">Example 5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#test-the-number-of-core-in-cpu"><span class="nav-number">3.6.</span> <span class="nav-text">Test the Number of Core in CPU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#some-question-you-may-ask"><span class="nav-number">3.7.</span> <span class="nav-text">Some Question You may Ask</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#file-structure"><span class="nav-number">4.</span> <span class="nav-text">File Structure</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
