@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"gy-hu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Introduction Fuzzing is a practical, widely-deployed technique to find bugs in complex, real-world programs like JavaScript engines. Some researchers (Park et al., 2020) nowadays have conducted resear">
+  <meta name="description" content="Introduction Fuzzing is a practical, widely deployed technique for finding bugs in complex, real-world programs such as JavaScript engines.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Tool Learning 0 - Basic Knowledge of Fuzzilli">
 <meta property="og:url" content="https://gy-hu.github.io/2021/07/04/Tool-learning-0/index.html">
 <meta property="og:site_name" content="Gary&#39;s Personal Page">
-<meta property="og:description" content="Introduction Fuzzing is a practical, widely-deployed technique to find bugs in complex, real-world programs like JavaScript engines. Some researchers (Park et al., 2020) nowadays have conducted resear">
+<meta property="og:description" content="Introduction Fuzzing is a practical, widely deployed technique for finding bugs in complex, real-world programs such as JavaScript engines.">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705172205.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705115022.png">
@@ -222,14 +222,14 @@
 
       
         <h2 id="introduction">Introduction</h2>
-<p>Fuzzing is a practical, widely-deployed technique to find bugs in complex, real-world programs like JavaScript engines. Some researchers (Park et al., 2020) have recently conducted research on this topic and turned their attention to some commercial applications.</p>
-<p>Thus, to learn how to fuzz a JS engine, I first need to focus on an open-source project. My choice is Fuzzilli. In this post, I will record my experience of learning Fuzzilli and my attempt to apply it to ChakraCore (an open-source JS engine used in the Edge browser).</p>
+<p>Fuzzing is a practical, widely deployed technique for finding bugs in complex, real-world programs such as JavaScript engines. Recent research, including Park et al. (2020), has explored this topic and extended it to commercial applications.</p>
+<p>To learn how to fuzz a JavaScript engine, I first focused on an open-source project: Fuzzilli. In this post, I record my experience learning Fuzzilli and my attempt to apply it to ChakraCore, the open-source JavaScript engine once used in the Edge browser.</p>
 <a id="more"></a>
-<p>Throughout this introduction, I have referred to some content in <a target="_blank" rel="noopener" href="https://blog.doyensec.com/2020/09/09/fuzzilli-jerryscript.html">this blog</a> and <a target="_blank" rel="noopener" href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwiZ_szIwcvxAhXCdCsKHSctC3kQFjABegQIAhAD&amp;url=https%3A%2F%2Fsaelo.github.io%2Fpresentations%2Foffensivecon_19_fuzzilli.pdf&amp;usg=AOvVaw2KzOIx-n6SmrBf83dnNt2p">this slide</a>.</p>
-<h3 id="what-is-fuzzilli">What is Fuzzilli</h3>
-<p>Fuzzilli is a fuzzer for fuzzing JavaScript engines. It was developed by <a target="_blank" rel="noopener" href="https://twitter.com/5aelo">Samuel Groß</a>, who graduated from Karlsruher Institut für Technologie. This tool was first proposed in his <a target="_blank" rel="noopener" href="https://saelo.github.io/papers/thesis.pdf">master thesis</a>, and his motivation for designing it was to find bugs in JS engines (JIT compilers, for instance).</p>
+<p>For this introduction, I referred to content from <a target="_blank" rel="noopener" href="https://blog.doyensec.com/2020/09/09/fuzzilli-jerryscript.html">this blog post</a> and <a target="_blank" rel="noopener" href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwiZ_szIwcvxAhXCdCsKHSctC3kQFjABegQIAhAD&amp;url=https%3A%2F%2Fsaelo.github.io%2Fpresentations%2Foffensivecon_19_fuzzilli.pdf&amp;usg=AOvVaw2KzOIx-n6SmrBf83dnNt2p">these slides</a>.</p>
+<h3 id="what-is-fuzzilli">What Is Fuzzilli?</h3>
+<p>Fuzzilli is a fuzzer for JavaScript engines. It was developed by <a target="_blank" rel="noopener" href="https://twitter.com/5aelo">Samuel Groß</a>, who graduated from the Karlsruhe Institute of Technology. The tool was first proposed in his <a target="_blank" rel="noopener" href="https://saelo.github.io/papers/thesis.pdf">master's thesis</a>, and his motivation was to find bugs in JavaScript engines, especially JIT compilers.</p>
 <p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705172205.png" /></p>
-<p>It uses an intermediate representation (IR) language called FuzzIL, which is perfectly suitable for mutation. Any program written in FuzzIL could be converted to valid JS code. Currently, the official GitHub repo supports <a target="_blank" rel="noopener" href="https://github.com/WebKit/webkit">JavaScriptCore</a> (the JS engine for Safari), <a target="_blank" rel="noopener" href="https://github.com/jerryscript-project/jerryscript">Jerryscript</a> (JS engine for IoT devices), <a target="_blank" rel="noopener" href="https://github.com/bellard/quickjs">QuickJS</a> (Light weight embeddable JS engine), <a target="_blank" rel="noopener" href="https://github.com/mozilla/gecko-dev">Spider monkey</a> (JS engine for Mozilla Firefox), <a target="_blank" rel="noopener" href="https://v8.dev/docs/build">V8</a> (JS engine for Google Chrome), <a target="_blank" rel="noopener" href="https://github.com/svaarala/duktape">duktape</a> (Embeddable Javascript engine, can be regarded as light weight v8).</p>
+<p>Fuzzilli uses an intermediate representation (IR) language called FuzzIL, which is well suited for mutation. Any program written in FuzzIL can be converted into valid JavaScript code. The official GitHub repository currently supports <a target="_blank" rel="noopener" href="https://github.com/WebKit/webkit">JavaScriptCore</a> (the JavaScript engine for Safari), <a target="_blank" rel="noopener" href="https://github.com/jerryscript-project/jerryscript">JerryScript</a> (a JavaScript engine for IoT devices), <a target="_blank" rel="noopener" href="https://github.com/bellard/quickjs">QuickJS</a> (a lightweight embeddable JavaScript engine), <a target="_blank" rel="noopener" href="https://github.com/mozilla/gecko-dev">SpiderMonkey</a> (the JavaScript engine for Mozilla Firefox), <a target="_blank" rel="noopener" href="https://v8.dev/docs/build">V8</a> (the JavaScript engine for Google Chrome), and <a target="_blank" rel="noopener" href="https://github.com/svaarala/duktape">Duktape</a> (an embeddable lightweight JavaScript engine).</p>
 <h3 id="terminology">Terminology</h3>
 <table>
 <colgroup>
@@ -253,30 +253,30 @@
 </tr>
 <tr class="odd">
 <td>Generation</td>
-<td>The generation program has been described in the thesis. All the programs stem from this simple JavaScript by cleverly applying multiple mutators: <code>Object()</code></td>
+<td>The generation program is described in the thesis. All generated programs start from this simple JavaScript expression and grow through a sequence of mutators: <code>Object()</code></td>
 </tr>
 </tbody>
 </table>
 <h3 id="requirements">Requirements</h3>
 <h4 id="valid-syntax-of-produced-samples">Valid syntax of produced samples</h4>
-<p>The main idea is to formulate the JavaScript language as a context-free grammar, then apply random production rules. The script below was generated by a grammar-based fuzzer.</p>
+<p>The main idea is to model JavaScript as a context-free grammar and then apply random production rules. The script below was generated by a grammar-based fuzzer.</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...;</span><br><span class="line"><span class="keyword">var</span> v4 = <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">42</span>, v3, “foobar”);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> v5 = <span class="number">0</span>; v5 &lt; <span class="number">1000</span>; v5++) &#123;    </span><br><span class="line">    v4 = v5 * <span class="number">7</span>;    </span><br><span class="line">    <span class="keyword">var</span> v6 = v4.slice(v1, v1, v2);</span><br><span class="line">    &#125;</span><br><span class="line">...;</span><br></pre></td></tr></table></figure>
-<p>However, an exception may occur when v4.slice is not a function, which would prevent the following statement from being executed. This could be solved by adding try-catch, but that would mean two quite different things for a JIT compiler.</p>
+<p>However, an exception may occur when <code>v4.slice</code> is not a function, which prevents the following statement from executing. This could be solved by adding <code>try-catch</code>, but that would mean something very different for a JIT compiler.</p>
 <p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705115022.png" /></p>
 <h4 id="high-degree-of-semantic-correctness">High degree of semantic correctness</h4>
-<p>This requirement is harder to achieve than syntactical correctness. There are multiple options for this:</p>
+<p>This requirement is harder to achieve than syntactic correctness. There are multiple options:</p>
 <blockquote>
 <ol type="a">
 <li><p>Precise type tracking in generated code.</p></li>
-<li><p>Generate JavaScript code “step-by-step”, validating after each step.</p></li>
-<li><p>Use mutational approach, only keep semantically valid samples in corpus.</p></li>
+<li><p>Generate JavaScript code step by step, validating after each step.</p></li>
+<li><p>Use a mutation-based approach and keep only semantically valid samples in the corpus.</p></li>
 </ol>
 </blockquote>
 <h4 id="definition-of-sensible-mutations-of-javascript-code">Definition of sensible mutations of JavaScript code</h4>
 <p>Mutation is possible at different levels, from the source code level to the bytecode level.</p>
 <p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705115612.png" /></p>
-<h3 id="fuzzil-and-mutation">FuzzIL and mutation</h3>
-<p>As mentioned in the previous part, FuzzIL is an intermediate language, and it is used to capture control flow and data flow. There are four mutation methods defined on the IL, which are operation mutator, input mutator, splice mutator and insertion mutator.</p>
+<h3 id="fuzzil-and-mutation">FuzzIL and Mutation</h3>
+<p>As mentioned above, FuzzIL is an intermediate language used to capture control flow and data flow. Four mutation methods are defined on the IL: operation mutator, input mutator, splice mutator, and insertion mutator.</p>
 <p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705155143.png" /></p>
 <h3 id="minimization">Minimization</h3>
 <p>Since mutation can only grow a program in size, minimization is required before inserting programs into the corpus. The minimization algorithm is simple; the pseudocode is shown below:</p>
@@ -284,18 +284,18 @@
 <p>Thus, the program is minimized until no instruction can be removed without changing its behavior. This algorithm is very expensive, so there is much room for improvement here.</p>
 <h3 id="guided-fuzzing">Guided Fuzzing</h3>
 <p>The feedback system is plugged in to encourage programs to undergo further mutations. A method called <strong>edge-coverage</strong>, which is similar to AFL, has been implemented.</p>
-<p>The algorithm of guided fuzzing is shown below:</p>
+<p>The guided-fuzzing algorithm is shown below:</p>
 <p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161047.png" /></p>
 <p>The architecture of Fuzzilli is shown below:</p>
 <p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705174754.png" /></p>
 <h3 id="synchronization">Synchronization</h3>
-<p>I think this part is interesting; this process reminds me of Hadoop. There is a master node and several worker nodes. At the beginning, the workers start to explore the program independently, and when one of them finds something interesting, it notifies the master node.</p>
+<p>I find this part interesting because the process reminds me of Hadoop. There is a master node and several worker nodes. At the beginning, the workers explore the program independently. When one of them finds something interesting, it notifies the master node.</p>
 <table>
 <thead>
 <tr class="header">
-<th>At begin</th>
-<th>Find some interesting</th>
-<th>Master got the information</th>
+<th>Start</th>
+<th>Find something interesting</th>
+<th>Master receives the information</th>
 </tr>
 </thead>
 <tbody>
@@ -306,12 +306,12 @@
 </tr>
 </tbody>
 </table>
-<p>After the master node has executed and checked it, it notifies the other worker nodes.</p>
+<p>After the master node executes and checks the sample, it notifies the other worker nodes.</p>
 <table>
 <thead>
 <tr class="header">
-<th>Master executed</th>
-<th>Finish checking</th>
+<th>Master executes</th>
+<th>Checking finishes</th>
 <th>Share information</th>
 </tr>
 </thead>
@@ -323,11 +323,11 @@
 </tr>
 </tbody>
 </table>
-<p>The other worker nodes then execute and evaluate it on their own. This process can be set up with GCE and Docker, and can probably be implemented on Kubernetes.</p>
+<p>The other worker nodes then execute and evaluate the sample on their own. This process can be set up with GCE and Docker, and it could probably be implemented on Kubernetes.</p>
 <table>
 <thead>
 <tr class="header">
-<th>Worker executed and evaluated</th>
+<th>Worker executes and evaluates</th>
 <th>End</th>
 <th>Can be scaled further</th>
 </tr>
@@ -340,7 +340,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="how-it-works">How it works</h2>
+<h2 id="how-it-works">How It Works</h2>
 <p>For more details about Fuzzilli, refer to <a target="_blank" rel="noopener" href="https://github.com/googleprojectzero/fuzzilli/blob/main/Docs/HowFuzzilliWorks.md">this document</a>.</p>
 <h2 id="reference">Reference</h2>
 <p>Park, S., Xu, W., Yun, I., Jang, D., &amp; Kim, T. (2020). Fuzzing JavaScript Engines with Aspect-preserving Mutation. <em>2020 IEEE Symposium on Security and Privacy (SP)</em>, 1629–1642. https://doi.org/10.1109/SP40000.2020.00067</p>
@@ -363,8 +363,8 @@
       <i class="fa fa-chevron-left"></i> Paper Reading 4 - PCKV: Locally Differentially Private Correlated Key-Value Data Collection with Optimized Utility
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/07/05/Tool-learning-1/" rel="next" title="Tool Learning 1 - Use Fuzzilli on Real Target">
-      Tool Learning 1 - Use Fuzzilli on Real Target <i class="fa fa-chevron-right"></i>
+    <a href="/2021/07/05/Tool-learning-1/" rel="next" title="Tool Learning 1 - Use Fuzzilli on Real Targets">
+      Tool Learning 1 - Use Fuzzilli on Real Targets <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -424,7 +424,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#what-is-fuzzilli"><span class="nav-number">1.1.</span> <span class="nav-text">What is Fuzzilli</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#terminology"><span class="nav-number">1.2.</span> <span class="nav-text">Terminology</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#requirements"><span class="nav-number">1.3.</span> <span class="nav-text">Requirements</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#valid-syntax-of-produced-samples"><span class="nav-number">1.3.1.</span> <span class="nav-text">Valid syntax of produced samples</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#high-degree-of-semantic-correctness"><span class="nav-number">1.3.2.</span> <span class="nav-text">High degree of semantic correctness</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#definition-of-sensible-mutations-of-javascript-code"><span class="nav-number">1.3.3.</span> <span class="nav-text">Definition of sensible mutations of JavaScript code</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fuzzil-and-mutation"><span class="nav-number">1.4.</span> <span class="nav-text">FuzzIL and mutation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#minimization"><span class="nav-number">1.5.</span> <span class="nav-text">Minimization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#guided-fuzzing"><span class="nav-number">1.6.</span> <span class="nav-text">Guided Fuzzing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronization"><span class="nav-number">1.7.</span> <span class="nav-text">Synchronization</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#how-it-works"><span class="nav-number">2.</span> <span class="nav-text">How it works</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#what-is-fuzzilli"><span class="nav-number">1.1.</span> <span class="nav-text">What Is Fuzzilli?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#terminology"><span class="nav-number">1.2.</span> <span class="nav-text">Terminology</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#requirements"><span class="nav-number">1.3.</span> <span class="nav-text">Requirements</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#valid-syntax-of-produced-samples"><span class="nav-number">1.3.1.</span> <span class="nav-text">Valid syntax of produced samples</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#high-degree-of-semantic-correctness"><span class="nav-number">1.3.2.</span> <span class="nav-text">High degree of semantic correctness</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#definition-of-sensible-mutations-of-javascript-code"><span class="nav-number">1.3.3.</span> <span class="nav-text">Definition of sensible mutations of JavaScript code</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fuzzil-and-mutation"><span class="nav-number">1.4.</span> <span class="nav-text">FuzzIL and Mutation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#minimization"><span class="nav-number">1.5.</span> <span class="nav-text">Minimization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#guided-fuzzing"><span class="nav-number">1.6.</span> <span class="nav-text">Guided Fuzzing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronization"><span class="nav-number">1.7.</span> <span class="nav-text">Synchronization</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#how-it-works"><span class="nav-number">2.</span> <span class="nav-text">How It Works</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"gy-hu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="One sentence summary The authors systematize binary disassembly through a study of nine popular open-source tools, and try to answer three important questions.">
+  <meta name="description" content="One-sentence summary The authors systematize binary disassembly by studying nine popular open-source tools and answering three key questions.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Paper Reading 1 - All You Ever Wanted to Know About x86&#x2F;x64 Binary Disassembly But Were Afraid to Ask">
 <meta property="og:url" content="https://gy-hu.github.io/2021/06/21/Paper-reading-1/index.html">
 <meta property="og:site_name" content="Gary&#39;s Personal Page">
-<meta property="og:description" content="One sentence summary The authors systematize binary disassembly through a study of nine popular open-source tools, and try to answer three important questions.">
+<meta property="og:description" content="One-sentence summary The authors systematize binary disassembly by studying nine popular open-source tools and answering three key questions.">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://i.imgur.com/E14X6Ur.png">
 <meta property="og:image" content="https://i.imgur.com/Z0v3Isj.png">
@@ -213,8 +213,8 @@
 
       
         <p><img src="https://i.imgur.com/E14X6Ur.png" /></p>
-<h2 id="one-sentence-summary">One sentence summary</h2>
-<p>The authors systematize binary disassembly through a study of nine popular open-source tools, and try to answer three important questions.<br />
+<h2 id="one-sentence-summary">One-Sentence Summary</h2>
+<p>The authors systematize binary disassembly by studying nine popular open-source tools and answering three key questions.<br />
 <a id="more"></a></p>
 <blockquote>
 <ul>
@@ -224,34 +224,34 @@
 </ul>
 </blockquote>
 <h2 id="background">Background</h2>
-<p>The disassembly of binary programs is a crucial task in reverse engineering and software security. However, some information is still lost while disassembling a binary because heuristic methods do not offer assurances of correctness. Past research lacks sufficient qualitative and quantitative study.</p>
+<p>Disassembling binary programs is a crucial task in reverse engineering and software security. However, information can still be lost during disassembly because heuristic methods do not guarantee correctness. Prior research also lacks sufficient qualitative and quantitative analysis.</p>
 <p><img src="https://i.imgur.com/Z0v3Isj.png" /> <img src="https://i.imgur.com/QF2I1Oy.png" /></p>
 <h2 id="method">Method</h2>
 <ul>
-<li>Inspecting the source code to conduct qualitative study, avoiding ambiguities and out-of-date information found in documentation and publications</li>
-<li>Applying nine tools on a corpus of 3,788 benchmark binaries, consisting of utilities, client/server programs, and popular libraries on both Linux and Windows systems.</li>
-<li>For the evaluation of coverage and accuracy, the author build a framework based on LLVM, GCC, the Gold Linker, and Visual Studio to automatically collect the ground truth while building the corpus.</li>
+<li>Inspect the source code to conduct a qualitative study while avoiding ambiguities and outdated information in documentation and publications.</li>
+<li>Apply nine tools to a corpus of 3,788 benchmark binaries, including utilities, client/server programs, and popular libraries on both Linux and Windows.</li>
+<li>To evaluate coverage and accuracy, build a framework based on LLVM, GCC, the Gold Linker, and Visual Studio that automatically collects ground truth while building the corpus.</li>
 </ul>
 <p><img src="https://i.imgur.com/6jIKUdA.png" /></p>
-<h2 id="scope-of-research">Scope of research</h2>
+<h2 id="scope-of-research">Scope of Research</h2>
 <h3 id="binaryies">Binaries</h3>
 <ul>
-<li>Have been produced with mainstream compilers and linkers</li>
+<li>Produced with mainstream compilers and linkers</li>
 <li>May include hand-written assembly</li>
-<li>They have not been obfuscated</li>
-<li>Do not assume symbol availability, i.e., binaries are stripped</li>
-<li>Only consider X86/X64 binaries</li>
+<li>Not obfuscated</li>
+<li>No assumption of symbol availability, i.e., binaries are stripped</li>
+<li>Limited to x86/x64 binaries</li>
 <li>Run on Linux or Windows operating systems</li>
 </ul>
 <h3 id="tools">Tools</h3>
 <ul>
-<li>Designated for disassembly or have an independent module for disassembly</li>
-<li>Can do automated disassembly without user interactions.</li>
-<li>Are open source tools so that we can study their implemented strategies.</li>
-<li>Have unique strategies that are not fully covered by other tools.</li>
-<li>Can run our targeted binaries to support our quantitative evaluation.</li>
+<li>Designed for disassembly or include an independent disassembly module</li>
+<li>Support automated disassembly without user interaction</li>
+<li>Are open source, which allows the implemented strategies to be studied</li>
+<li>Use strategies that are not fully covered by other tools</li>
+<li>Can process the target binaries used in the quantitative evaluation</li>
 </ul>
-<h2 id="analysis-of-the-tools">Analysis of the tools</h2>
+<h2 id="analysis-of-the-tools">Analysis of the Tools</h2>
 <p><img src="https://i.imgur.com/EsJNvEG.png" /></p>
 <h2 id="evaluation">Evaluation</h2>
 <p><img src="https://i.imgur.com/k8ROIrO.png" /></p>
@@ -263,19 +263,19 @@
 <li>Tool selection should be demand-specific.</li>
 <li>Broader and deeper evaluation is needed for future improvements.</li>
 </ul>
-<h2 id="reading-summary">Reading summary</h2>
+<h2 id="reading-summary">Reading Summary</h2>
 <ul>
 <li><strong><em>What is the motivation?</em></strong></li>
 </ul>
-<p>Past research lacks a systematic study of currently popular disassemblers, and has not pointed out the influence introduced by using heuristics.</p>
+<p>Past research lacks a systematic study of currently popular disassemblers and has not clearly explained the impact of using heuristics.</p>
 <ul>
-<li><strong><em>What is the novelty &amp; contribution</em></strong></li>
+<li><strong><em>What are the novelty and contribution?</em></strong></li>
 </ul>
 <ol type="1">
 <li>Present a thorough systematization of binary disassembly from the perspective of algorithms and heuristics.<br />
 </li>
-<li>Developed a compiler-based framework for automated end-to-end collection of ground truth for binary disassembly and used it to compose a benchmark data set for assessing binary disassembly tools.</li>
-<li>Make new observations and improve the understanding of binary-disassembly strategies and tools.</li>
+<li>Develop a compiler-based framework for automated, end-to-end collection of binary-disassembly ground truth, and use it to build a benchmark dataset for assessing disassembly tools.</li>
+<li>Provide new observations that improve the understanding of binary-disassembly strategies and tools.</li>
 </ol>
 
     </div>
@@ -292,12 +292,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/06/16/Paper-reading-0/" rel="prev" title="Paper Reading 0 - where2change">
-      <i class="fa fa-chevron-left"></i> Paper Reading 0 - where2change
+    <a href="/2021/06/16/Paper-reading-0/" rel="prev" title="Paper Reading 0 - Where2Change">
+      <i class="fa fa-chevron-left"></i> Paper Reading 0 - Where2Change
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/06/22/Paper-reading-2/" rel="next" title="Paper Reading 2 - Semantic-based Patch Presence Testing for Downstream Kernels">
-      Paper Reading 2 - Semantic-based Patch Presence Testing for Downstream Kernels <i class="fa fa-chevron-right"></i>
+    <a href="/2021/06/22/Paper-reading-2/" rel="next" title="Paper Reading 2 - Semantic-Based Patch Presence Testing for Downstream Kernels">
+      Paper Reading 2 - Semantic-Based Patch Presence Testing for Downstream Kernels <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -357,7 +357,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#one-sentence-summary"><span class="nav-number">1.</span> <span class="nav-text">One sentence summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#background"><span class="nav-number">2.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">3.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#scope-of-research"><span class="nav-number">4.</span> <span class="nav-text">Scope of research</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#binaryies"><span class="nav-number">4.1.</span> <span class="nav-text">Binaries</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tools"><span class="nav-number">4.2.</span> <span class="nav-text">Tools</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#analysis-of-the-tools"><span class="nav-number">5.</span> <span class="nav-text">Analysis of the tools</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#evaluation"><span class="nav-number">6.</span> <span class="nav-text">Evaluation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#discussion"><span class="nav-number">7.</span> <span class="nav-text">Discussion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reading-summary"><span class="nav-number">8.</span> <span class="nav-text">Reading summary</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#one-sentence-summary"><span class="nav-number">1.</span> <span class="nav-text">One-Sentence Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#background"><span class="nav-number">2.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">3.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#scope-of-research"><span class="nav-number">4.</span> <span class="nav-text">Scope of Research</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#binaryies"><span class="nav-number">4.1.</span> <span class="nav-text">Binaries</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tools"><span class="nav-number">4.2.</span> <span class="nav-text">Tools</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#analysis-of-the-tools"><span class="nav-number">5.</span> <span class="nav-text">Analysis of the Tools</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#evaluation"><span class="nav-number">6.</span> <span class="nav-text">Evaluation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#discussion"><span class="nav-number">7.</span> <span class="nav-text">Discussion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reading-summary"><span class="nav-number">8.</span> <span class="nav-text">Reading Summary</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

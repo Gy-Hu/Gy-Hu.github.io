@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"gy-hu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="One sentence summary The author proposed Limbo, a new framework for automatically discovering defense-awre code in executables, which overcome the defect that the current defend-aware attacks exists">
+  <meta name="description" content="One-sentence summary The authors proposed Limbo, a framework for automatically discovering defense-aware code-reuse attacks in executables.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Paper Reading 3 - A Generic Technique for Automatically Finding Defense-Aware Code Reuse Attacks">
 <meta property="og:url" content="https://gy-hu.github.io/2021/06/23/Paper-reading-3/index.html">
 <meta property="og:site_name" content="Gary&#39;s Personal Page">
-<meta property="og:description" content="One sentence summary The author proposed Limbo, a new framework for automatically discovering defense-awre code in executables, which overcome the defect that the current defend-aware attacks exists">
+<meta property="og:description" content="One-sentence summary The authors proposed Limbo, a framework for automatically discovering defense-aware code-reuse attacks in executables.">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://i.imgur.com/UXuQo4i.png">
 <meta property="og:image" content="https://i.imgur.com/bEZhZ0Y.png">
@@ -213,32 +213,32 @@
 
       
         <p><img src="https://i.imgur.com/UXuQo4i.png" /></p>
-<h2 id="one-sentence-summary">One sentence summary</h2>
-<p>The authors proposed Limbo, a new framework for automatically discovering defense-aware code in executables, which overcomes a defect of current defense-aware attacks (their feasibility is highly dependent on the behavior of the attacked program). <a id="more"></a></p>
+<h2 id="one-sentence-summary">One-Sentence Summary</h2>
+<p>The authors proposed Limbo, a framework for automatically discovering defense-aware code-reuse attacks in executables. It addresses a key limitation of current defense-aware attacks: their feasibility depends heavily on the behavior of the attacked program. <a id="more"></a></p>
 <h2 id="background">Background</h2>
-<p>Although defenses such as CFI break many code reuse attacks, there are still avenues to attack them, and researchers have developed a variety of defense-aware strategies for targeting defenses. However, these strategies have some issues. For instance, some will fail in the presence of defenses such as CFI, some are aware of CFI but they are complex and only target a single, hard-coded CFI variant, some have always focused on automating a specific defense-aware technique for constructing code reuse attacks (e.g., DOP) that was manually discovered through human insight.</p>
-<h2 id="related-work">Related work</h2>
-<p>There are some tools for constructing CRAs:</p>
+<p>Although defenses such as CFI break many code-reuse attacks, attackers still have ways to target them, and researchers have developed a variety of defense-aware strategies. However, these strategies have several issues. Some fail in the presence of defenses such as CFI; some are CFI-aware but complex and limited to a single, hard-coded CFI variant; and others focus on automating a specific defense-aware technique, such as DOP, that was originally discovered through manual insight.</p>
+<h2 id="related-work">Related Work</h2>
+<p>Some tools can construct code-reuse attacks:</p>
 <ul>
-<li>BOPC, which is a state-of-the-art system for automatically discovering CFI-aware DOP attacks.</li>
-<li>angrop, a popular ROP automation tool that is part of the angr binary analysis framework</li>
+<li>BOPC, a state-of-the-art system for automatically discovering CFI-aware DOP attacks.</li>
+<li>angrop, a popular ROP automation tool that is part of the angr binary-analysis framework.</li>
 </ul>
-<p>However, those methods face challenges that hinder their development.</p>
+<p>However, these methods face challenges that limit their development.</p>
 <h2 id="method">Method</h2>
-<p>The code reuse attack problem can be reduced to software model checking (SMC) problem. Analogously, a code reuse problem is to determine whether a goal state can be reached from a vulnerability. The author use concolic execution, which allows Limbo to take a state and enumerate some of the states that are reachable from it by executing the program symbolically. Limbo uses this ability to iteratively compute a set of states that are reachable from the vulnerability. As soon as this set contains a goal state, Limbo outputs the discovered attack as an executable test case. The test case contains inputs that, when given to the program, will cause it to reach a goal state.</p>
-<p>The customization of concolic execution is based on the Mayhem binary code executor. The authors considered storage, heuristic principles, and when the heuristic is evaluated. In addition, the authors limit symbolic branches as well. For the tweaks to concolic execution, the authors modified some parts of Mayhem, such as indirect jumps and symbolic memory.</p>
+<p>The code-reuse attack problem can be reduced to a software model checking (SMC) problem. In this setting, the goal is to determine whether a goal state can be reached from a vulnerability. The authors use concolic execution, which allows Limbo to take a state and enumerate some states reachable from it by executing the program symbolically. Limbo uses this capability to iteratively compute the set of states reachable from the vulnerability. As soon as this set contains a goal state, Limbo outputs the discovered attack as an executable test case. The test case contains inputs that make the program reach the goal state.</p>
+<p>The customized concolic execution is based on the Mayhem binary-code executor. The authors considered storage, heuristic principles, and when each heuristic should be evaluated. They also limit symbolic branches. To adapt concolic execution, the authors modified parts of Mayhem, including its handling of indirect jumps and symbolic memory.</p>
 <h2 id="evaluation">Evaluation</h2>
 <p><img src="https://i.imgur.com/bEZhZ0Y.png" /> <img src="https://i.imgur.com/HIKQWVH.png" /> <img src="https://i.imgur.com/2qHfe9n.png" /> <img src="https://i.imgur.com/0Da33ss.png" /> <img src="https://i.imgur.com/80ICAoS.png" /></p>
-<h2 id="reading-summary">Reading summary</h2>
+<h2 id="reading-summary">Reading Summary</h2>
 <ul>
-<li><p><strong><em>What is the novelty</em></strong></p></li>
-<li><p>Leverage concolic execution</p></li>
-<li><p>Not only discovers existing attack methods (ROP, JOP, COP, and DOP), but also potentially discovers attacks that do not correspond to known code reuse techniques.</p></li>
-<li><p><strong><em>What is the contribution</em></strong><br />
+<li><p><strong><em>What is the novelty?</em></strong></p></li>
+<li><p>It leverages concolic execution.</p></li>
+<li><p>It not only discovers existing attack methods, including ROP, JOP, COP, and DOP, but may also discover attacks that do not correspond to known code-reuse techniques.</p></li>
+<li><p><strong><em>What is the contribution?</em></strong><br />
 </p></li>
-<li><p>Propose a generic framework for automatically identifying defense-aware code reuse attacks</p></li>
-<li><p>Implement our framework in a tool called Limbo. We show how existing binary concolic executors can be leveraged to implement our framework with a small set of modifications.</p></li>
-<li><p>Show that Limbo outperforms both angrop and BOPC, state-of-the-art tools for automatically constructing ROP and DOP attacks respectively, when there is little code available for reuse.</p></li>
+<li><p>The authors propose a generic framework for automatically identifying defense-aware code-reuse attacks.</p></li>
+<li><p>They implement the framework in a tool called Limbo and show how existing binary concolic executors can support it with only a small set of modifications.</p></li>
+<li><p>They show that Limbo outperforms both angrop and BOPC, state-of-the-art tools for automatically constructing ROP and DOP attacks respectively, when little code is available for reuse.</p></li>
 </ul>
 
     </div>
@@ -255,8 +255,8 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/06/22/Paper-reading-2/" rel="prev" title="Paper Reading 2 - Semantic-based Patch Presence Testing for Downstream Kernels">
-      <i class="fa fa-chevron-left"></i> Paper Reading 2 - Semantic-based Patch Presence Testing for Downstream Kernels
+    <a href="/2021/06/22/Paper-reading-2/" rel="prev" title="Paper Reading 2 - Semantic-Based Patch Presence Testing for Downstream Kernels">
+      <i class="fa fa-chevron-left"></i> Paper Reading 2 - Semantic-Based Patch Presence Testing for Downstream Kernels
     </a></div>
       <div class="post-nav-item">
     <a href="/2021/07/02/Paper-reading-4/" rel="next" title="Paper Reading 4 - PCKV: Locally Differentially Private Correlated Key-Value Data Collection with Optimized Utility">
@@ -320,7 +320,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#one-sentence-summary"><span class="nav-number">1.</span> <span class="nav-text">One sentence summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#background"><span class="nav-number">2.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#related-work"><span class="nav-number">3.</span> <span class="nav-text">Related work</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#evaluation"><span class="nav-number">5.</span> <span class="nav-text">Evaluation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reading-summary"><span class="nav-number">6.</span> <span class="nav-text">Reading summary</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#one-sentence-summary"><span class="nav-number">1.</span> <span class="nav-text">One-Sentence Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#background"><span class="nav-number">2.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#related-work"><span class="nav-number">3.</span> <span class="nav-text">Related Work</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#evaluation"><span class="nav-number">5.</span> <span class="nav-text">Evaluation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reading-summary"><span class="nav-number">6.</span> <span class="nav-text">Reading Summary</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

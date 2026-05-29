@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"gy-hu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="One sentence summary The author proposed PDiff, which is a reliable patch presence testing for downstream kernels, to solve the two main challenges (third-party customization and non-standard buildin">
+  <meta name="description" content="One-sentence summary The authors proposed PDiff, a reliable patch-presence testing technique for downstream kernels that handles third-party customization and non-standard build configurations.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Paper Reading 2 - Semantic-based Patch Presence Testing for Downstream Kernels">
+<meta property="og:title" content="Paper Reading 2 - Semantic-Based Patch Presence Testing for Downstream Kernels">
 <meta property="og:url" content="https://gy-hu.github.io/2021/06/22/Paper-reading-2/index.html">
 <meta property="og:site_name" content="Gary&#39;s Personal Page">
-<meta property="og:description" content="One sentence summary The author proposed PDiff, which is a reliable patch presence testing for downstream kernels, to solve the two main challenges (third-party customization and non-standard buildin">
+<meta property="og:description" content="One-sentence summary The authors proposed PDiff, a reliable patch-presence testing technique for downstream kernels that handles third-party customization and non-standard build configurations.">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://i.imgur.com/PI2FYv5.png">
 <meta property="og:image" content="https://i.imgur.com/MfsFkbh.png">
@@ -53,7 +53,7 @@
   };
 </script>
 
-  <title>Paper Reading 2 - Semantic-based Patch Presence Testing for Downstream Kernels | Gary's Personal Page</title>
+  <title>Paper Reading 2 - Semantic-Based Patch Presence Testing for Downstream Kernels | Gary's Personal Page</title>
   
 
 
@@ -182,7 +182,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Paper Reading 2 - Semantic-based Patch Presence Testing for Downstream Kernels
+          Paper Reading 2 - Semantic-Based Patch Presence Testing for Downstream Kernels
         </h1>
 
         <div class="post-meta">
@@ -214,22 +214,22 @@
 
       
         <p><img src="https://i.imgur.com/PI2FYv5.png" /></p>
-<h2 id="one-sentence-summary">One sentence summary</h2>
-<p>The author proposed PDiff, which is a reliable patch presence testing for downstream kernels, to solve the two main challenges (<strong><em>third-party customization</em></strong> and <strong><em>non-standard building configurations</em></strong>) in existing testing methods. <a id="more"></a></p>
+<h2 id="one-sentence-summary">One-Sentence Summary</h2>
+<p>The authors proposed PDiff, a reliable patch-presence testing technique for downstream kernels that addresses two major challenges in existing methods: <strong><em>third-party customization</em></strong> and <strong><em>non-standard build configurations</em></strong>. <a id="more"></a></p>
 <h2 id="background">Background</h2>
-<p>The OS kernel is the core of computer software, and many downstream vendors choose an open-source kernel for customized development (such as the Linux kernel used in mobile phones and IoT devices). It is difficult for downstream vendors to provide security at the same level as the mainstream version, which prevents them from applying released patches in a timely manner. Current research faces two issues (patch delay and inaccuracy) and two challenges (third-party customization and non-standard building configuration).</p>
+<p>The OS kernel is the core of computer software, and many downstream vendors choose an open-source kernel for customized development, such as the Linux kernels used in mobile phones and IoT devices. It is difficult for downstream vendors to provide the same level of security as the upstream version, which prevents them from applying released patches in a timely manner. Current research faces two issues, patch delay and inaccuracy, as well as two challenges, third-party customization and non-standard build configurations.</p>
 <p><img src="https://i.imgur.com/MfsFkbh.png" /> <img src="https://i.imgur.com/JPkUEF3.png" /></p>
-<h2 id="related-work">Related work</h2>
-<p>There are two existing technical routes. One is writing a PoC (proof of concept) to perform a penetration test and determine the existence of patches by triggering the vulnerability. The other is to generate a signature from the patched mainstream version and search for it in the target version. However, because of the challenges mentioned above (<strong><em>third-party customization</em></strong> and <strong><em>non-standard building configurations</em></strong>), these two techniques do not work in some cases.</p>
+<h2 id="related-work">Related Work</h2>
+<p>There are two existing technical approaches. One writes a PoC (proof of concept) to perform a penetration test and determine whether a patch exists by triggering the vulnerability. The other generates a signature from the patched upstream version and searches for it in the target version. However, because of the challenges mentioned above (<strong><em>third-party customization</em></strong> and <strong><em>non-standard build configurations</em></strong>), these two techniques do not work in some cases.</p>
 <h2 id="method">Method</h2>
-<p>The author proposed PDiff to test the existence of patches in the downstream kernel. The method can be divided into three phases.</p>
+<p>The authors proposed PDiff to test whether patches are present in downstream kernels. The method can be divided into three phases.</p>
 <ul>
-<li>Recognize the area affected by a patch, and collect the paths it influences. Then the authors find the <strong><em>anchor block</em></strong> in the patch-related function to refine the patch-related region.</li>
-<li>Generate the semantic based patch summary and construct the path digest.</li>
-<li>Based on the patch summary, the authors conduct the patch existence test; the key idea is to compare the distance between path digests. <img src="https://i.imgur.com/qTlDrXc.png" /></li>
+<li>Identify the area affected by a patch and collect the paths it influences. Then the authors find the <strong><em>anchor block</em></strong> in the patch-related function to refine the patch-related region.</li>
+<li>Generate the semantic-based patch summary and construct the path digest.</li>
+<li>Conduct the patch-presence test based on the patch summary. The key idea is to compare the distance between path digests. <img src="https://i.imgur.com/qTlDrXc.png" /></li>
 </ul>
 <h2 id="experiment">Experiment</h2>
-<p>The authors conducted the experiment on 51 patches and 398 kernel images, which included 115,111 (image, patch) pairs. The experiments show that PDiff can handle the two main challenges in this field (third-party customization and non-standard building configurations). <img src="https://i.imgur.com/hB0e8AZ.png" /> <img src="https://i.imgur.com/VPWsJEt.png" /> <img src="https://i.imgur.com/Pg96Ryk.png" /></p>
+<p>The authors evaluated PDiff on 51 patches and 398 kernel images, covering 115,111 image-patch pairs. The experiments show that PDiff can handle the two main challenges in this field: third-party customization and non-standard build configurations. <img src="https://i.imgur.com/hB0e8AZ.png" /> <img src="https://i.imgur.com/VPWsJEt.png" /> <img src="https://i.imgur.com/Pg96Ryk.png" /></p>
 
     </div>
 
@@ -310,7 +310,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#one-sentence-summary"><span class="nav-number">1.</span> <span class="nav-text">One sentence summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#background"><span class="nav-number">2.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#related-work"><span class="nav-number">3.</span> <span class="nav-text">Related work</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">5.</span> <span class="nav-text">Experiment</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#one-sentence-summary"><span class="nav-number">1.</span> <span class="nav-text">One-Sentence Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#background"><span class="nav-number">2.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#related-work"><span class="nav-number">3.</span> <span class="nav-text">Related Work</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">5.</span> <span class="nav-text">Experiment</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
