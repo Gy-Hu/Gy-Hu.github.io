@@ -222,14 +222,14 @@
 
       
         <h2 id="introduction">Introduction</h2>
-<p>Fuzzing is a practical, widely-deployed technique to find bugs in complex, real-world programs like JavaScript engines. Some researchers (Park et al., 2020) nowadays have conducted research on this topic and make their attention to some commercial application.</p>
-<p>Thus, to learn how to fuzz on JS engine, firstly I need to pay my attention to a open source project. My choice is Fuzzilli. In this post, I will record the experience of learning Fuzzilli, and my attempt to implement this to Chakracore (which is a open source JSE implemented in Edge broswer).</p>
+<p>Fuzzing is a practical, widely-deployed technique to find bugs in complex, real-world programs like JavaScript engines. Some researchers (Park et al., 2020) have recently conducted research on this topic and turned their attention to some commercial applications.</p>
+<p>Thus, to learn how to fuzz a JS engine, I first need to focus on an open-source project. My choice is Fuzzilli. In this post, I will record my experience of learning Fuzzilli and my attempt to apply it to ChakraCore (an open-source JS engine used in the Edge browser).</p>
 <a id="more"></a>
-<p>In the whole part of introduction, I have referred some content in <a target="_blank" rel="noopener" href="https://blog.doyensec.com/2020/09/09/fuzzilli-jerryscript.html">this blog</a> and <a target="_blank" rel="noopener" href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwiZ_szIwcvxAhXCdCsKHSctC3kQFjABegQIAhAD&amp;url=https%3A%2F%2Fsaelo.github.io%2Fpresentations%2Foffensivecon_19_fuzzilli.pdf&amp;usg=AOvVaw2KzOIx-n6SmrBf83dnNt2p">this slide</a>.</p>
+<p>Throughout this introduction, I have referred to some content in <a target="_blank" rel="noopener" href="https://blog.doyensec.com/2020/09/09/fuzzilli-jerryscript.html">this blog</a> and <a target="_blank" rel="noopener" href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwiZ_szIwcvxAhXCdCsKHSctC3kQFjABegQIAhAD&amp;url=https%3A%2F%2Fsaelo.github.io%2Fpresentations%2Foffensivecon_19_fuzzilli.pdf&amp;usg=AOvVaw2KzOIx-n6SmrBf83dnNt2p">this slide</a>.</p>
 <h3 id="what-is-fuzzilli">What is Fuzzilli</h3>
-<p>Fuzzilli is a fuzzer for fuzzing JavaScript engines. It was developed by <a target="_blank" rel="noopener" href="https://twitter.com/5aelo">Samuel Groß</a>, who graduated from Karlsruher Institut für Technologie. This tool was firstly proposed in his <a target="_blank" rel="noopener" href="https://saelo.github.io/papers/thesis.pdf">master thesis</a>, and its motivation of designing this is to find bugs in JS engines (JIT compilers, for instance).</p>
+<p>Fuzzilli is a fuzzer for fuzzing JavaScript engines. It was developed by <a target="_blank" rel="noopener" href="https://twitter.com/5aelo">Samuel Groß</a>, who graduated from Karlsruher Institut für Technologie. This tool was first proposed in his <a target="_blank" rel="noopener" href="https://saelo.github.io/papers/thesis.pdf">master thesis</a>, and his motivation for designing it was to find bugs in JS engines (JIT compilers, for instance).</p>
 <p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705172205.png" /></p>
-<p>It uses an intermediate representation (IR) language called FuzzIL, which is perfectly suitable for mutation. Any program written in FuzzIL could be converted to valid JS code. Currently, the official github repo support <a target="_blank" rel="noopener" href="https://github.com/WebKit/webkit">JavaScriptCore</a> (JS engine for safari), <a target="_blank" rel="noopener" href="https://github.com/jerryscript-project/jerryscript">Jerryscript</a> (JS engine for IoT devices), <a target="_blank" rel="noopener" href="https://github.com/bellard/quickjs">QuickJS</a> (Light weight embeddable JS engine), <a target="_blank" rel="noopener" href="https://github.com/mozilla/gecko-dev">Spider monkey</a> (JS engine for Mozilla Firefox), <a target="_blank" rel="noopener" href="https://v8.dev/docs/build">V8</a> (JS engine for Google Chrome), <a target="_blank" rel="noopener" href="https://github.com/svaarala/duktape">duktape</a> (Embeddable Javascript engine, can be regarded as light weight v8).</p>
+<p>It uses an intermediate representation (IR) language called FuzzIL, which is perfectly suitable for mutation. Any program written in FuzzIL could be converted to valid JS code. Currently, the official GitHub repo supports <a target="_blank" rel="noopener" href="https://github.com/WebKit/webkit">JavaScriptCore</a> (the JS engine for Safari), <a target="_blank" rel="noopener" href="https://github.com/jerryscript-project/jerryscript">Jerryscript</a> (JS engine for IoT devices), <a target="_blank" rel="noopener" href="https://github.com/bellard/quickjs">QuickJS</a> (Light weight embeddable JS engine), <a target="_blank" rel="noopener" href="https://github.com/mozilla/gecko-dev">Spider monkey</a> (JS engine for Mozilla Firefox), <a target="_blank" rel="noopener" href="https://v8.dev/docs/build">V8</a> (JS engine for Google Chrome), <a target="_blank" rel="noopener" href="https://github.com/svaarala/duktape">duktape</a> (Embeddable Javascript engine, can be regarded as light weight v8).</p>
 <h3 id="terminology">Terminology</h3>
 <table>
 <colgroup>
@@ -245,23 +245,23 @@
 <tbody>
 <tr class="odd">
 <td>REPRL<a target="_blank" rel="noopener" href="https://github.com/googleprojectzero/fuzzilli/blob/main/Sources/Fuzzilli/Execution/REPRL.swift">(read-eval-print-reset-loop)</a>.</td>
-<td>REPRL is a mechanism to reduce the overhead of launching a new process have been implemented. As many fuzzer architectures use Forkserver, Fuzzilli use REPRL approach, which saves the overhead caused by fork() and execution per sample could be faster.</td>
+<td>REPRL is a mechanism to reduce the overhead of launching a new process. As many fuzzer architectures use a forkserver, Fuzzilli uses the REPRL approach, which saves the overhead caused by fork() so that execution per sample can be faster.</td>
 </tr>
 <tr class="even">
 <td>Coverage</td>
-<td><a target="_blank" rel="noopener" href="https://clang.llvm.org/docs/SanitizerCoverage.html#tracing-pcs-with-guards">LLVM</a> provide this kind of function. Clang complier has a schema called <code>-fsanitize-coverage=trace-pc-guard</code>, we can receive a pointer to the <code>start</code> and <code>end</code> of the regions, which are initialized by the guard number. Whenever a branch is executed, the <code>__sanitizer_cov_trace_pc_guard</code> callback is called.</td>
+<td><a target="_blank" rel="noopener" href="https://clang.llvm.org/docs/SanitizerCoverage.html#tracing-pcs-with-guards">LLVM</a> provides this kind of function. The Clang compiler has an option called <code>-fsanitize-coverage=trace-pc-guard</code>. With it, we can receive a pointer to the <code>start</code> and <code>end</code> of the regions, which are initialized by the guard number. Whenever a branch is executed, the <code>__sanitizer_cov_trace_pc_guard</code> callback is called.</td>
 </tr>
 <tr class="odd">
 <td>Generation</td>
-<td>The generation program has been described in the thesis. All the program stem from this simple JavaScript by cleverly applying multiple mutators: <code>Object()</code></td>
+<td>The generation program has been described in the thesis. All the programs stem from this simple JavaScript by cleverly applying multiple mutators: <code>Object()</code></td>
 </tr>
 </tbody>
 </table>
 <h3 id="requirements">Requirements</h3>
 <h4 id="valid-syntax-of-produced-samples">Valid syntax of produced samples</h4>
-<p>The main idea is to formulate JavaScript language as context-free grammar, then apply random production rules. The below script was generated by grammar-based fuzzer.</p>
+<p>The main idea is to formulate the JavaScript language as a context-free grammar, then apply random production rules. The script below was generated by a grammar-based fuzzer.</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...;</span><br><span class="line"><span class="keyword">var</span> v4 = <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">42</span>, v3, “foobar”);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> v5 = <span class="number">0</span>; v5 &lt; <span class="number">1000</span>; v5++) &#123;    </span><br><span class="line">    v4 = v5 * <span class="number">7</span>;    </span><br><span class="line">    <span class="keyword">var</span> v6 = v4.slice(v1, v1, v2);</span><br><span class="line">    &#125;</span><br><span class="line">...;</span><br></pre></td></tr></table></figure>
-<p>However, the exception may occur when v4.slice is not a function, which will make the following statement would not be executed. This could be solved by adding try-catch, but it will make two pretty different things for a JIT compiler.</p>
+<p>However, an exception may occur when v4.slice is not a function, which would prevent the following statement from being executed. This could be solved by adding try-catch, but that would mean two quite different things for a JIT compiler.</p>
 <p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705115022.png" /></p>
 <h4 id="high-degree-of-semantic-correctness">High degree of semantic correctness</h4>
 <p>This requirement is harder to achieve than syntactical correctness. There are multiple options for this:</p>
@@ -273,23 +273,23 @@
 </ol>
 </blockquote>
 <h4 id="definition-of-sensible-mutations-of-javascript-code">Definition of sensible mutations of JavaScript code</h4>
-<p>The mutation possible at different levels, from source code level to bytecode level.</p>
+<p>Mutation is possible at different levels, from the source code level to the bytecode level.</p>
 <p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705115612.png" /></p>
 <h3 id="fuzzil-and-mutation">FuzzIL and mutation</h3>
-<p>As mentioned in the previous part, FuzzIL is a intermediate language, and it used to capture control flow and data flow. There are four mutation methods defined on the IL, which are operation mutator, input mutator, splice mutator and insertion mutator.</p>
+<p>As mentioned in the previous part, FuzzIL is an intermediate language, and it is used to capture control flow and data flow. There are four mutation methods defined on the IL, which are operation mutator, input mutator, splice mutator and insertion mutator.</p>
 <p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705155143.png" /></p>
 <h3 id="minimization">Minimization</h3>
-<p>Since mutation can only grow a program in size, minimization has been required before inserting them into the corpus. The algorithm of minimization is simple, the psuedocode is as below:</p>
+<p>Since mutation can only grow a program in size, minimization is required before inserting programs into the corpus. The minimization algorithm is simple; the pseudocode is shown below:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">remove one instruction (starting at end)</span><br><span class="line"></span><br><span class="line">if the program still valid:</span><br><span class="line"></span><br><span class="line">​	execute the program</span><br><span class="line"></span><br><span class="line">​	if behavior (crash, new edges) has changed:</span><br><span class="line"></span><br><span class="line">​		restore instruction</span><br><span class="line"></span><br><span class="line">​	else if the behavior not change :</span><br><span class="line"></span><br><span class="line">​		continue to remove next instruction</span><br><span class="line"></span><br><span class="line">else if the program is not valid:</span><br><span class="line"></span><br><span class="line">​	restore instruction</span><br></pre></td></tr></table></figure>
-<p>Thus, the program will be minimized until it has no instruction could be remove without changing its behavior. The cost of this algorithm is very expensive, so there is much room for improvement here.</p>
+<p>Thus, the program is minimized until no instruction can be removed without changing its behavior. This algorithm is very expensive, so there is much room for improvement here.</p>
 <h3 id="guided-fuzzing">Guided Fuzzing</h3>
-<p>The feedback system will be plugged in to stimulate the programs have future mutations. There is a method called <strong>edge-coverage</strong>, which is similar to afl, has been implemented.</p>
-<p>The algorithm of guided fuzzing is as below:</p>
+<p>The feedback system is plugged in to encourage programs to undergo further mutations. A method called <strong>edge-coverage</strong>, which is similar to AFL, has been implemented.</p>
+<p>The algorithm of guided fuzzing is shown below:</p>
 <p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705161047.png" /></p>
-<p>The architecture of fuzzilli could be as below:</p>
+<p>The architecture of Fuzzilli is shown below:</p>
 <p><img src="https://raw.githubusercontent.com/Gy-Hu/FigureBed/master/img/20210705174754.png" /></p>
 <h3 id="synchronization">Synchronization</h3>
-<p>I think this part is interesting, this process let me think about hadoop. There is a master node and a couple of worker node. At begin, the worker will begin to find something in the program independently, when one of them find some interesting, they will notify the master node.</p>
+<p>I think this part is interesting; this process reminds me of Hadoop. There is a master node and several worker nodes. At the beginning, the workers start to explore the program independently, and when one of them finds something interesting, it notifies the master node.</p>
 <table>
 <thead>
 <tr class="header">
@@ -306,7 +306,7 @@
 </tr>
 </tbody>
 </table>
-<p>After master node executed and checked, it would notify this to other worker node.</p>
+<p>After the master node has executed and checked it, it notifies the other worker nodes.</p>
 <table>
 <thead>
 <tr class="header">
@@ -323,7 +323,7 @@
 </tr>
 </tbody>
 </table>
-<p>The other worker node will executed and evaluated by their own. This process can be setup with GCE and docker, and probably can implement on Kubernetes.</p>
+<p>The other worker nodes then execute and evaluate it on their own. This process can be set up with GCE and Docker, and can probably be implemented on Kubernetes.</p>
 <table>
 <thead>
 <tr class="header">
@@ -341,7 +341,7 @@
 </tbody>
 </table>
 <h2 id="how-it-works">How it works</h2>
-<p>For more details of fuzzilli, can refer to <a target="_blank" rel="noopener" href="https://github.com/googleprojectzero/fuzzilli/blob/main/Docs/HowFuzzilliWorks.md">this document</a>.</p>
+<p>For more details about Fuzzilli, refer to <a target="_blank" rel="noopener" href="https://github.com/googleprojectzero/fuzzilli/blob/main/Docs/HowFuzzilliWorks.md">this document</a>.</p>
 <h2 id="reference">Reference</h2>
 <p>Park, S., Xu, W., Yun, I., Jang, D., &amp; Kim, T. (2020). Fuzzing JavaScript Engines with Aspect-preserving Mutation. <em>2020 IEEE Symposium on Security and Privacy (SP)</em>, 1629–1642. https://doi.org/10.1109/SP40000.2020.00067</p>
 

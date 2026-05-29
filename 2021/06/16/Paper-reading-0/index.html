@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"gy-hu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="One sentence summary Proposed a method to advanced Palomba et al.&#39;s work on extracting useful information from user reviews to main and evolve mobile apps.">
+  <meta name="description" content="One sentence summary Proposed a method to advance Palomba et al.&#39;s work on extracting useful information from user reviews to maintain and evolve mobile apps.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Paper Reading 0 - where2change">
 <meta property="og:url" content="https://gy-hu.github.io/2021/06/16/Paper-reading-0/index.html">
 <meta property="og:site_name" content="Gary&#39;s Personal Page">
-<meta property="og:description" content="One sentence summary Proposed a method to advanced Palomba et al.&#39;s work on extracting useful information from user reviews to main and evolve mobile apps.">
+<meta property="og:description" content="One sentence summary Proposed a method to advance Palomba et al.&#39;s work on extracting useful information from user reviews to maintain and evolve mobile apps.">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://i.imgur.com/kJnkNb1.png">
 <meta property="og:image" content="https://i.imgur.com/X5Dtrf2.png">
@@ -212,31 +212,31 @@
       
         <p><img src="https://i.imgur.com/kJnkNb1.png" /></p>
 <h2 id="one-sentence-summary">One sentence summary</h2>
-<p>Proposed a method to advanced Palomba et al.'s work on extracting useful information from user reviews to main and evolve mobile apps. <a id="more"></a></p>
+<p>Proposed a method to advance Palomba et al.'s work on extracting useful information from user reviews to maintain and evolve mobile apps. <a id="more"></a></p>
 <h2 id="background">Background</h2>
-<p>Currently, the app developer usually maintain their apps related to the user's reviews and scores. And this helps developer to located the bugs in their app. Previous research leverage IR-based fault localization techniques, but there exist some research gaps. First, the previous research focus on desktop app rather than mobile app. Second, the previous technique <strong>cannot automate the process of analysis on user reviews</strong>, which results in that the developer may ignore the new published problem.</p>
+<p>Currently, app developers usually maintain their apps based on users' reviews and scores, and this helps developers locate the bugs in their apps. Previous research leverages IR-based fault localization techniques, but there exist some research gaps. First, previous research focused on desktop apps rather than mobile apps. Second, previous techniques <strong>cannot automate the process of analysis on user reviews</strong>, which means developers may ignore newly reported problems.</p>
 <h2 id="related-work">Related work</h2>
-<p>Palomba et al. proposed CHANGEADVISOR, which clusters reviews based on similar requirement, and locates the set of source code that needs to be changed for each cluster of reviews. However, this technique relate to the reviews with detailed information, otherwise the technique could not map user's review to any class.</p>
+<p>Palomba et al. proposed CHANGEADVISOR, which clusters reviews based on similar requirements, and locates the set of source code that needs to be changed for each cluster of reviews. However, this technique relies on reviews that contain detailed information; otherwise it cannot map a user's review to any class.</p>
 <h2 id="method">Method</h2>
 <ul>
 <li>First, extract the informative sentences (i.e., user feedback) contained in user reviews.</li>
 <li>Second, use tool-SURF to automatically classify the user feedback into five categories, then cluster them using HDP which presents the best clustering performance among six popular clustering algorithms.</li>
 <li>Third, treat each cluster of user feedback as a query to search for the classes that should be changed in source code.</li>
-<li>Forth, propose a more accurate similarity metric named weight-selection-based cosine similarity to measure the similarity between an enriched version of comment cluster and the source code.</li>
-<li>At the end, for each cluster of user feedback, Where2Change returns a ranked list of potentially classes to be changed</li>
+<li>Fourth, propose a more accurate similarity metric named weight-selection-based cosine similarity to measure the similarity between an enriched version of comment cluster and the source code.</li>
+<li>At the end, for each cluster of user feedback, Where2Change returns a ranked list of classes that potentially need to be changed</li>
 </ul>
 <p><img src="https://i.imgur.com/X5Dtrf2.png" /><br />
 <img src="https://i.imgur.com/Y1b8QrD.png" /></p>
 <h2 id="experiment">Experiment</h2>
 <p><img src="https://i.imgur.com/oXEx6g2.png" /></p>
 <h2 id="discussion">Discussion</h2>
-<p>All in all, the researcher proposed a weight selection-based cosine similarity metric to compute the similarity between the enriched cluster of user feedback and the source code. For the future work, the author plan to explore a better way to select the user feedback related to real faults and feature requests reported in issue reports. Moreover, the author are interested in <strong>developing a new method to locate source code classes to be changed for each user feedback entry rather than a cluster of user feedback.</strong></p>
+<p>All in all, the researcher proposed a weight selection-based cosine similarity metric to compute the similarity between the enriched cluster of user feedback and the source code. As future work, the authors plan to explore a better way to select the user feedback related to real faults and feature requests reported in issue reports. Moreover, the authors are interested in <strong>developing a new method to locate source code classes to be changed for each user feedback entry rather than a cluster of user feedback.</strong></p>
 <h2 id="reading-summary">Reading summary</h2>
 <ul>
 <li><p><strong><em>What is the motivation?</em></strong></p>
-<p>Propose a framework to automate the process of analysis of user review, and fix the drawback in CHANGEADVISOR, which is no robust enough.</p></li>
+<p>Propose a framework to automate the analysis of user reviews, and fix the drawback in CHANGEADVISOR, which is not robust enough.</p></li>
 <li><p><strong><em>What is the novelty</em></strong></p>
-<p>The proposed framework implement weight selection-based cosine similarity metric.</p></li>
+<p>The proposed framework implements a weight-selection-based cosine similarity metric.</p></li>
 <li><p><strong><em>What is the contribution</em></strong></p>
 <p>Overcome the limitation of CHANGEADVISOR.</p></li>
 </ul>

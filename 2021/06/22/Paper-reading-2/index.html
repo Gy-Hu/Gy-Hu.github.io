@@ -215,21 +215,21 @@
       
         <p><img src="https://i.imgur.com/PI2FYv5.png" /></p>
 <h2 id="one-sentence-summary">One sentence summary</h2>
-<p>The author proposed PDiff, which is a reliable patch presence testing for downstream kernels, to solve the two main challenges (<strong><em>third-party customization</em></strong> and <strong><em>non-standard building configurations</em></strong>) in existing testing method. <a id="more"></a></p>
+<p>The author proposed PDiff, which is a reliable patch presence testing for downstream kernels, to solve the two main challenges (<strong><em>third-party customization</em></strong> and <strong><em>non-standard building configurations</em></strong>) in existing testing methods. <a id="more"></a></p>
 <h2 id="background">Background</h2>
-<p>OS kernel is the core of computer software, many downstream vendors will choose open source kernel to conduct customized development (such as the linux kernel used in mobile phone and IoT devices). Downstream vendors are difficult to provide security at the same level of mainstream version, which makes them cannot use released patches timely. Current research exists two issues (patch delay and inaccurate) and two challenges (third-party customization and non-standard building configuration).</p>
+<p>The OS kernel is the core of computer software, and many downstream vendors choose an open-source kernel for customized development (such as the Linux kernel used in mobile phones and IoT devices). It is difficult for downstream vendors to provide security at the same level as the mainstream version, which prevents them from applying released patches in a timely manner. Current research faces two issues (patch delay and inaccuracy) and two challenges (third-party customization and non-standard building configuration).</p>
 <p><img src="https://i.imgur.com/MfsFkbh.png" /> <img src="https://i.imgur.com/JPkUEF3.png" /></p>
 <h2 id="related-work">Related work</h2>
-<p>There are two existing technical routes. One is writing PoC (Proof of concept) to do penetration test, and figure out the existence of patches by triggering the vulnerability. The other is to generate signature from patched mainstream version, and searching on the targeted version. However, as the challengs exists (<strong><em>third-party customization</em></strong> and <strong><em>non-standard building configurations</em></strong>), these two techniques are not working on some cases.</p>
+<p>There are two existing technical routes. One is writing a PoC (proof of concept) to perform a penetration test and determine the existence of patches by triggering the vulnerability. The other is to generate a signature from the patched mainstream version and search for it in the target version. However, because of the challenges mentioned above (<strong><em>third-party customization</em></strong> and <strong><em>non-standard building configurations</em></strong>), these two techniques do not work in some cases.</p>
 <h2 id="method">Method</h2>
-<p>The author proposed PDiff to test the existence of patches in the downstream kernel. The method can be divided into three phares.</p>
+<p>The author proposed PDiff to test the existence of patches in the downstream kernel. The method can be divided into three phases.</p>
 <ul>
-<li>Recognize the influenced area of patches, and collect the influenced path by patch. Then auother find the <strong><em>anchor block</em></strong> on patches related function to fine-grined the patch-related region.</li>
+<li>Recognize the area affected by a patch, and collect the paths it influences. Then the authors find the <strong><em>anchor block</em></strong> in the patch-related function to refine the patch-related region.</li>
 <li>Generate the semantic based patch summary and construct the path digest.</li>
-<li>Based on patch summary, the author conduct patch existence test, the key idea is to compare the distance between path digest. <img src="https://i.imgur.com/qTlDrXc.png" /></li>
+<li>Based on the patch summary, the authors conduct the patch existence test; the key idea is to compare the distance between path digests. <img src="https://i.imgur.com/qTlDrXc.png" /></li>
 </ul>
 <h2 id="experiment">Experiment</h2>
-<p>The author did the experiment on 51 pathches and 398 kernel images, which included 115111 (image, patch) pairs. The experiments shows the result that the PDiff can handle the two main challenges in this field (third-party customization and building configurations) <img src="https://i.imgur.com/hB0e8AZ.png" /> <img src="https://i.imgur.com/VPWsJEt.png" /> <img src="https://i.imgur.com/Pg96Ryk.png" /></p>
+<p>The authors conducted the experiment on 51 patches and 398 kernel images, which included 115,111 (image, patch) pairs. The experiments show that PDiff can handle the two main challenges in this field (third-party customization and non-standard building configurations). <img src="https://i.imgur.com/hB0e8AZ.png" /> <img src="https://i.imgur.com/VPWsJEt.png" /> <img src="https://i.imgur.com/Pg96Ryk.png" /></p>
 
     </div>
 

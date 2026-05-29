@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"gy-hu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="One sentence summary The author proposed a new framework to solving some limitations in PrivKVM, achieving good experiment results on 4 real world dataset.">
+  <meta name="description" content="One sentence summary The authors proposed a new framework to address some limitations of PrivKVM, achieving good experimental results on 4 real-world datasets.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Paper Reading 4 - PCKV: Locally Differentially Private Correlated Key-Value Data Collection with Optimized Utility">
 <meta property="og:url" content="https://gy-hu.github.io/2021/07/02/Paper-reading-4/index.html">
 <meta property="og:site_name" content="Gary&#39;s Personal Page">
-<meta property="og:description" content="One sentence summary The author proposed a new framework to solving some limitations in PrivKVM, achieving good experiment results on 4 real world dataset.">
+<meta property="og:description" content="One sentence summary The authors proposed a new framework to address some limitations of PrivKVM, achieving good experimental results on 4 real-world datasets.">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://i.imgur.com/QxzSV5g.png">
 <meta property="og:image" content="https://i.imgur.com/DUqklqH.png">
@@ -218,12 +218,12 @@
       
         <p><img src="https://i.imgur.com/QxzSV5g.png" /></p>
 <h2 id="one-sentence-summary">One sentence summary</h2>
-<p>The author proposed a new framework to solving some limitations in PrivKVM, achieving good experiment results on 4 real world dataset.</p>
+<p>The authors proposed a new framework to address some limitations of PrivKVM, achieving good experimental results on 4 real-world datasets.</p>
 <a id="more"></a>
 <h2 id="background">Background</h2>
-<p>Some giant tech-companies are collecting our private data to provide better services, but privacy concerns arise in the present era. Some researcher proposed locally private data collection model to solve this problem.</p>
+<p>Some giant tech-companies are collecting our private data to provide better services, but privacy concerns arise in the present era. Some researchers proposed a locally private data collection model to solve this problem.</p>
 <p><img src="https://i.imgur.com/DUqklqH.png" /></p>
-<p>Especially for Key-Value data, there exist many challengs in Key-Value data. Here give a scenario which is the movie rating system (such as Douban and IMDB), and the problem define is:</p>
+<p>There exist many challenges, especially for key-value data. Here is a scenario: a movie rating system (such as Douban and IMDB), where the problem is defined as:</p>
 <table>
 <thead>
 <tr class="header">
@@ -256,17 +256,17 @@
 </table>
 <p><img src="https://i.imgur.com/gYPu7pJ.png" /> The existing challenges in this problem are:</p>
 <ul>
-<li><strong>Challenges 1</strong>: Each user has different number of key-value pairs.</li>
-<li><strong>Challenges 2</strong>: It's hard to report the corresponding value if a fake key is reported.</li>
-<li><strong>Challenges 3</strong>: It's hard to design an optimal mechanism with the best privacy-utility tradeoff.</li>
+<li><strong>Challenge 1</strong>: Each user has a different number of key-value pairs.</li>
+<li><strong>Challenge 2</strong>: It's hard to report the corresponding value if a fake key is reported.</li>
+<li><strong>Challenge 3</strong>: It's hard to design an optimal mechanism with the best privacy-utility tradeoff.</li>
 </ul>
 <h2 id="related-work">Related work</h2>
-<p>Duchi et al. proposed LDP(Local Differential Privacy) in 2013, this can be conclude as the following formula:</p>
+<p>Duchi et al. proposed LDP (Local Differential Privacy) in 2013, which can be summarized as the following formula:</p>
 <p><span class="math display">\[
 \frac{\operatorname{Pr}(\mathcal{M}(x)=y)}{\operatorname{Pr}\left(\mathcal{M}\left(x^{\prime}\right)=y\right)} \leqslant e^{\varepsilon}
 \]</span></p>
 <ul>
-<li><span class="math inline">\(x\)</span>, <span class="math inline">\(x^{\prime}\)</span> : Stand for the raw data generate by user</li>
+<li><span class="math inline">\(x\)</span>, <span class="math inline">\(x^{\prime}\)</span> : The raw data generated by the user</li>
 <li><span class="math inline">\(y\)</span> : The perturbed data</li>
 <li><span class="math inline">\(\epsilon\)</span> : Privacy budget</li>
 </ul>
@@ -277,33 +277,33 @@
 <p><span class="math display">\[
 \mathbb{E}[f]=f^{*} p+\left(1-f^{*}\right)(1-p)=(2 p-1) f^{*}+(1-p)
 \]</span></p>
-<p>After that, many other researchers have proposed OUE, GRR which are extended RR for general cases. GRR stand for <strong>generalized randomized response</strong>, the formula is here:</p>
+<p>After that, many other researchers proposed OUE and GRR, which extend RR to general cases. GRR stands for <strong>generalized randomized response</strong>; the formula is shown here:</p>
 <p><span class="math display">\[
 \operatorname{Pr}(\mathcal{M}(x)=y)=\left\{\begin{array}{ll}
 p=\frac{e^{\varepsilon}}{e^{\epsilon}+d-1}, &amp; \text { if } y=x \\
 q=\frac{1-p}{d-1}, &amp; \text { if } y \neq x
 \end{array}\right.
 \]</span></p>
-<p>UE stand for <strong>Unary Encoding</strong>, the formula is here:</p>
+<p>UE stands for <strong>Unary Encoding</strong>; the formula is shown here:</p>
 <p><span class="math display">\[
 \operatorname{Pr}(\mathbf{y}[k]=1)=\left\{\begin{array}{ll}
 p, &amp; \text { if } \mathbf{x}[k]=1 \\
 q, &amp; \text { if } \mathbf{x}[k]=0
 \end{array} \quad(\forall k=1,2, \cdots, d)\right.
 \]</span></p>
-<p>Ye at al. proposed <strong>PrivKVM</strong> in 2019, the process of their framework is: <img src="https://i.imgur.com/fMLpA05.png" /></p>
+<p>Ye et al. proposed <strong>PrivKVM</strong> in 2019; the process of their framework is: <img src="https://i.imgur.com/fMLpA05.png" /></p>
 <h2 id="method">Method</h2>
 <p><strong>- Step 1. Choose the advanced sampling protocol</strong><br />
 <strong>- Step 2. Jointly perturb key-value and jointly analyze the privacy</strong> (which provides tight privacy budget composition)<br />
 <strong>- Step 3. Optimally put all things together</strong> (i.e., optimized privacy budget allocation under a fixed total budget)</p>
 <p><img src="https://i.imgur.com/UW7aukX.png" /></p>
 <ul>
-<li><strong>Advanced sampling protocol</strong>: Each user pads her keys into a uniform length <span class="math inline">\(\ell\)</span> by some dummy keys.</li>
+<li><strong>Advanced sampling protocol</strong>: Each user pads her keys to a uniform length <span class="math inline">\(\ell\)</span> using dummy keys.</li>
 <li><strong>Joint privacy analysis</strong>: In an end-to-end way (instead of directly using sequential composition).</li>
 <li><strong>Optimized allocation</strong> of <span class="math inline">\(\epsilon_{1}\)</span> and <span class="math inline">\(\epsilon_{2}\)</span>: by minimizing MSE of estimation under tight budget composition.</li>
 </ul>
 <h2 id="evaluation">Evaluation</h2>
-<p>The evaluation part author conduct experiment on 4 real world dataset to test its robust <img src="https://i.imgur.com/nIJYo6H.png" /></p>
+<p>In the evaluation, the authors conduct experiments on 4 real-world datasets to test its robustness.<img src="https://i.imgur.com/nIJYo6H.png" /></p>
 <h3 id="on-e-commerce-dataset">On E-commerce dataset</h3>
 <p><img src="https://i.imgur.com/rx3nehK.png" /></p>
 <h3 id="on-clothing-dataset">On Clothing dataset</h3>
@@ -327,11 +327,11 @@ q, &amp; \text { if } \mathbf{x}[k]=0
 <tbody>
 <tr class="odd">
 <td><strong>What is the contribution</strong></td>
-<td>1. The author proposed PCKV framework，and simultanously proposed two methods: one is called <strong><em>PCKV-UE</em></strong>, which based on <strong><em>unary encoding</em></strong>, the other called <strong><em>PCKV-GRR</em></strong>，which based on <strong><em>generalized randomized response</em></strong>.</td>
+<td>1. The authors proposed the PCKV framework, and simultaneously proposed two methods: one is called <strong><em>PCKV-UE</em></strong>, which is based on <strong><em>unary encoding</em></strong>, and the other is called <strong><em>PCKV-GRR</em></strong>, which is based on <strong><em>generalized randomized response</em></strong>.</td>
 </tr>
 <tr class="even">
 <td></td>
-<td>2. Extend <strong><em>padding-and-sampling protocol</em></strong> for key-value data. Which has been verified that it is better than <strong><em>sampling protocol</em></strong> used in PrivKVM on <strong>large domain</strong>.</td>
+<td>2. Extend the <strong><em>padding-and-sampling protocol</em></strong> for key-value data, which has been verified to be better than the <strong><em>sampling protocol</em></strong> used in PrivKVM on a <strong>large domain</strong>.</td>
 </tr>
 <tr class="odd">
 <td></td>
@@ -343,10 +343,10 @@ q, &amp; \text { if } \mathbf{x}[k]=0
 </tr>
 <tr class="odd">
 <td></td>
-<td>5. Evaluate their scheme using both <strong>synthetic</strong> and <strong>real world datasets</strong>, which is shown to have <strong>higher utility</strong> (i.e., less MSE) than existing schemes</td>
+<td>5. Evaluate their scheme using both <strong>synthetic</strong> and <strong>real-world datasets</strong>, which is shown to have <strong>higher utility</strong> (i.e., less MSE) than existing schemes</td>
 </tr>
 <tr class="even">
-<td><strong>What is the strengths</strong></td>
+<td><strong>What are the strengths</strong></td>
 <td>1. Propose better <strong>mean of values estimate method</strong>, which can be calculated in <strong>only one round</strong>.</td>
 </tr>
 <tr class="odd">
@@ -355,7 +355,7 @@ q, &amp; \text { if } \mathbf{x}[k]=0
 </tr>
 <tr class="even">
 <td></td>
-<td>3. Use advanced <strong>sampling protocol</strong>, perform better than SOTA (e.g. PrivKVM) especially on <strong>large domain</strong>.</td>
+<td>3. Using the advanced <strong>sampling protocol</strong>, it performs better than SOTA (e.g. PrivKVM), especially on a <strong>large domain</strong>.</td>
 </tr>
 <tr class="odd">
 <td></td>
@@ -363,10 +363,10 @@ q, &amp; \text { if } \mathbf{x}[k]=0
 </tr>
 <tr class="even">
 <td></td>
-<td>5. In this framework, the Mean Square Error (MSE) of frequency and mean estimations in their scheme can be theoretically analyzed, they can derive <strong>near-optimal privacy budget allocation</strong> on key and value perturbations.</td>
+<td>5. In this framework, the Mean Square Error (MSE) of frequency and mean estimations in their scheme can be theoretically analyzed, and they can derive <strong>near-optimal privacy budget allocation</strong> on key and value perturbations.</td>
 </tr>
 <tr class="odd">
-<td><strong>What is the weaknesses</strong></td>
+<td><strong>What are the weaknesses</strong></td>
 <td>It has big variance for a smaller population.</td>
 </tr>
 <tr class="even">
@@ -375,7 +375,7 @@ q, &amp; \text { if } \mathbf{x}[k]=0
 </tr>
 <tr class="odd">
 <td><strong>Insight of future work</strong></td>
-<td>1. Extend the framework to protect machine learning (maybe inspire on federal learning?).</td>
+<td>1. Extend the framework to protect machine learning (perhaps inspired by federated learning?).</td>
 </tr>
 <tr class="even">
 <td></td>
@@ -383,7 +383,7 @@ q, &amp; \text { if } \mathbf{x}[k]=0
 </tr>
 <tr class="odd">
 <td></td>
-<td>3. Can this framework inspire on solving problem on social graphs, linear query answer, preference ranking and evolving data type?</td>
+<td>3. Can this framework inspire solutions to problems on social graphs, linear query answering, preference ranking, and evolving data types?</td>
 </tr>
 </tbody>
 </table>
